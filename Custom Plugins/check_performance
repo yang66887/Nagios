@@ -1,0 +1,816 @@
+#!/bin/bash
+
+# 调用示例
+# $USER1$/monitor $_SERVICENODE$ $HOSTADDRESS$ $_HOSTPORT$ $USER4$ $USER5$ $USER6$ $_SERVICEPATH$ $_SERVICEWARNING$ $_SERVICECRITICAL$ $_SERVICEUNIT$
+
+# 插件路径
+plugins='/usr/local/nagios/libexec'
+ncpa="${plugins}/check_ncpa"
+
+# 帮助以及错误信息
+dep_msg(){
+  echo 'Dependences Error.'
+  exit 3
+}
+
+help_msg(){
+  echo "$0 Node NCPA_Address Port Influxdb_Address:Influxdb_Port Influxdb_User:Influxdb_Password NCPA_Token NCPA_Metrics Warning_Value Critical_Value [NCPA_Unit]"
+  exit 0
+}
+
+error_msg(){
+  echo 'Args Error.'
+  exit 3
+}
+
+# 接收传参
+Node="${1}"
+Host="${2}"
+Port="${3}"
+Influx_URL="${4}"
+Influx_Auth="${5}"
+
+# 校验传参
+case $1 in
+  website)
+    [ $# -eq 9 ] || error_msg
+    HTTP_Auth="-a${6}"
+    HTTP_Url="-u${7}"
+    HTTP_SSL=${8}
+    HTTP_Name="${9}"
+    ;;
+  mysql_status)
+    [ $# -eq 8 ] || error_msg
+    MYSQL_User="${6}"
+    MYSQL_Pwd="${7}"
+    MYSQL_Mode="${8}"
+    ;;
+  mysql_health)
+    [ $# -eq 11 ] || error_msg
+    MYSQL_User="${6}"
+    MYSQL_Pwd="${7}"
+    MYSQL_Mode="${8}"
+    MYSQL_Health="${9}"
+    Warning="${10}"
+    Critical="${11}"
+    ;;
+  mysql_data)
+    [ $# -eq 12 ] ||error_msg
+    MYSQL_User="${6}"
+    MYSQL_Pwd="${7}"
+    MYSQL_Database="${8}"
+    MYSQL_Data="${9}"
+    MYSQL_Select="SQL_${10}"
+    MYSQL_Comment="${11}"
+    MYSQL_Unit="${12}"
+    ;;
+  cpu|memory|disk|IO|interface|system)
+    [ $# -eq 10 ] || error_msg
+    NCPA_Token="${6}"
+    NCPA_Path="${7}"
+    Warning="${8}"
+    Critical="${9}"
+    Unit="${10}"
+    ;;
+  nagios_plugins)
+    [ $# -eq 10 ] || error_msg
+    NCPA_Token="${6}"
+    NAGIOS_Plugin="${7}"
+    Warning="${8}"
+    Critical="${9}"
+    PLUGIN_Args="$(echo _${10}|sed 's/ /_/g')"
+    ;;
+  *)
+    error_msg
+esac
+
+# 检测依赖
+[ $(${ncpa} -V &>/dev/null;echo $?) -eq 0 ] || dep_msg
+[ $(which curl &>/dev/null;echo $?) -eq 0 ] || dep_msg
+[ $(which mysql &>/dev/null;echo $?) -eq 0 ] || dep_msg
+[ $(which /usr/bin/python &>/dev/null;echo $?) -eq 0 ] || dep_msg
+
+# python求和
+py_sum(){
+  Arr="($1)"
+  /usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+Arr = ${Arr}
+print(sum(Arr))
+EOF
+}
+
+# python获取Influxdb value
+py_json_value(){
+  if [ $(echo $1|grep ^\{.*\}$|wc -l) -eq 0 ];then
+    echo 0
+    return 1
+  else
+    /usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+try:
+  value=$1['results'][0]['series'][0]['values'][0][1]
+except Exception:
+  value=0
+if isinstance(value,(int)):
+  print(value)
+elif isinstance(value,(float)):
+  print("%.2f" % value)
+else:
+  print(value)
+EOF
+    return 0
+  fi
+}
+
+# python检查是否为数字
+py_isdigit(){
+  str="$1"
+  /usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+Str = '${str}'
+if len(Str) == 0:
+  print('2')
+elif Str.replace('.', '').isdigit():
+  print('0')
+else:
+  print('1')
+EOF
+}
+
+# 比对数字大小
+digital_compare(){
+  # 检查入参个数
+  if [ $# -eq 3 ];then
+    # 检查result值是否为数字
+    value1=$(py_isdigit $1)
+    # 检查warning值是否为数字
+    value2=$(py_isdigit $2)
+    # 检查critical值是否为数字
+    value3=$(py_isdigit $3)
+    if [ ${value1} -eq 0 -a ${value2} -eq 0 -a ${value3} -eq 0 ];then
+      # 根据大小决定返回值
+      if [ $(echo ${1} ${2}|awk '{print $1<$2}') -eq 1 ];then
+        return 0
+      elif [ $(echo ${1} ${2}|awk '{print $1>=$2}') -eq 1 -a $(echo ${1} ${3}|awk '{print $1<$2}') -eq 1 ];then
+        return 1
+      else
+        return 2
+      fi
+    else
+      return 2
+    fi
+  else
+    return 2
+  fi
+}
+
+# 查询Influxdb存储的MySQL Status值
+influx_mysql_status(){
+  py_json_value $(curl -s -u "${Influx_Auth}" -G "http://${Influx_URL}/query?pretty=false" \
+--data-urlencode "db=nagios_perfdata" \
+--data-urlencode "q=select last($1) from mysql_status where (host='${Host}')")
+  return $?
+}
+
+check_cpu(){
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "${Node}/${NCPA_Path}" -q "aggregate=${Unit}" -w ${Warning} -c ${Critical})
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 分离并存储检查结果中的部分数值
+  CPU_status="$(echo ${result}|awk '{print $1}'|sed 's/://g')"
+  CPU_percent="$(echo ${result}|awk '{print $4}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+Cpu_Usage,\
+Host=${Host},\
+i_Cpu_Status=${CPU_status},\
+k_Cpu_Unit=% \
+j_Cpu_Percent=${CPU_percent}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_mem(){
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "${Node}/${NCPA_Path}" -w ${Warning} -c ${Critical} -u ${Unit})
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 分离并存储检查结果中的部分数值
+  Memory_status="$(echo ${result}|awk '{print $1}'|sed 's/://g')"
+  Memory_max="$(echo ${result}|awk '{print $11}')"
+  Memory_used="$(echo ${result}|awk '{print $17}')"
+  Memory_percent="$(echo ${result}|awk '{print $5}')"
+  Memory_available="$(echo ${result}|awk '{print $8}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+Memory_Usage,\
+Host=${Host},\
+i_Memory_Status=${Memory_status},\
+o_Memory_Percent_unit=%,\
+m_Memory_Unit=${Unit}B \
+j_Memory_Max=${Memory_max},\
+k_Memory_Used=${Memory_used},\
+l_Memory_Available=${Memory_available},\
+n_Memory_Percent=${Memory_percent}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_disk(){
+  # 按照NCPA标准修改磁盘路径字符串(Linux修改 / 为 |, Windows盘符添加 :|)
+  mount_point="$(echo ${NCPA_Path}|sed -e 's/\//|/g' -e 's/^\([a-zA-Z]\)$/\1:|/g')"
+
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "${Node}/logical/${mount_point}" -w ${Warning} -c ${Critical} -u ${Unit})
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 分离并存储检查结果中的部分数值
+  Disk_status="$(echo ${result}|awk '{print $1}'|sed 's/://g')"
+  Disk_max="$(echo ${result}|awk '{print $15}')"
+  Disk_used="$(echo ${result}|awk '{print $9}')"
+  Disk_free="$(echo ${result}|awk '{print $12}')"
+  Disk_percent="$(echo ${result}|awk '{print $6}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+Disk_Usage,\
+Host=${Host},\
+j_Disk_Status=${Disk_status},\
+i_Partition_Name=${NCPA_Path},\
+p_Disk_Percent_Unit=%,\
+n_Disk_Unit=${Unit}B \
+k_Disk_Max=${Disk_max},\
+l_Disk_Used=${Disk_used},\
+m_Disk_Free=${Disk_free},\
+o_Disk_Percent=${Disk_percent}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_IO(){
+  # 分离并存储NCPA_Path参数中的磁盘名称
+  drive="$(echo ${NCPA_Path}|awk -F/ '{print $1}')"
+
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "disk/physical/${NCPA_Path}" -w ${Warning} -c ${Critical} -u ${Unit} -d)
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 分离并存储检查结果中的部分数值
+  IO_status="$(echo ${result}|awk '{print $1}'|sed 's/://g')"
+  IO_type="$(echo ${result}|awk '{print $2}')"
+  IO_current="$(echo ${result}|awk '{print $4}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+Disk_IO,\
+Host=${Host},\
+j_IO_Status=${IO_status},\
+i_Drive_Name=${drive},\
+k_IO_Type=${IO_type},\
+m_IO_Unit=${Unit}B/s \
+l_IO_Value=${IO_current}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_interface(){
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "${Node}/${NCPA_Path}" -w ${Warning} -c ${Critical} -u ${Unit} -d)
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 分离并存储检查结果中的部分数值
+  Traffic_status="$(echo ${result}|awk '{print $1}'|sed 's/://g')"
+  Traffic_type="$(echo ${result}|awk '{print $2}')"
+  Traffic_current="$(echo ${result}|awk '{print $4}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+Interface_Usage,\
+Host=${Host},\
+i_Traffic_Status=${Traffic_status},\
+j_Traffic_Type=${Traffic_type},\
+l_Traffic_Unit=${Unit}B/s \
+k_Traffic_Current=${Traffic_current}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_load(){
+  # 校验参数
+  [ "${PLUGIN_Args}" == '_NULL' ] && PLUGIN_Args=''
+
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "plugins/${Node}/${NAGIOS_Plugin}/-w_${Warning}_-c_${Critical}${PLUGIN_Args}")
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 分离并存储检查结果中的部分数值
+  Load_1="$(echo ${result}|awk -F\| '{print $1}'|awk '{print $5}'|sed 's/,//g')"
+  Load_5="$(echo ${result}|awk -F\| '{print $1}'|awk '{print $6}'|sed 's/,//g')"
+  Load_15="$(echo ${result}|awk -F\| '{print $1}'|awk '{print $7}')"
+  Load_Status="$(echo ${result}|awk '{print $1}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+Cpu_Load,\
+Host=${Host},\
+i_Status=${Load_Status} \
+j_Load_1=${Load_1},\
+k_Load_5=${Load_5},\
+l_Load_15=${Load_15}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_http(){
+  # 校验参数
+  [ "${HTTP_Auth}" == '-aNULL' ] && HTTP_Auth=''
+  [ "${HTTP_Url}" == '-uNULL' ] && HTTP_Url=''
+  if [ ${HTTP_SSL} -eq 1 ];then
+    HTTP_SSL='-S'
+  else
+    HTTP_SSL=''
+  fi
+
+  # 执行检查并存储检查结果
+  result=$(${plugins}/check_http -H${Host} -p${Port} ${HTTP_Auth} ${HTTP_Url} ${HTTP_SSL})
+
+  # 存储检查返回值
+  return_code=$?
+
+  if [ $(echo ${result}|grep ^HTTP|wc -l) -eq 1 ];then
+    # 分离并存储检查结果中的部分数值
+    Http_Status="$(echo ${result}|awk '{print $2}'|sed 's/://g')"
+    Http_Code="$(echo ${result}|awk '{print $4}')"
+    Response_Time="$(echo ${result}|sed 's/.*|time=\([0-9.]*\)s.*/\1/g')"
+
+    if [ $(echo ${Http_Code}|grep ^[0-9]*$ &>/dev/null;echo $?) -eq 0 ];then
+      # 将检查结果写入 Influxdb
+      curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+      --data-binary "\
+Web_Status,\
+Host=${Host},\
+j_Web_Port=${Port},\
+i_Web_Name=${HTTP_Name},\
+n_Response_Time_Unit=s \
+k_Web_Status=\"${Http_Status}\",\
+l_Http_Code=${Http_Code},\
+m_Response_Time=${Response_Time}" \
+&>/dev/null
+    fi
+  fi
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_mysql_status(){
+  # 执行检查并存储检查结果
+  MySQL_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
+show global status where Variable_name regexp '\
+uptime$|\
+questions|\
+slow_queries|\
+threads_connected|\
+threads_cached|\
+threads_created|\
+com_commit|\
+com_rollback$|\
+innodb_buffer_pool_pages_dirty|\
+innodb_buffer_pool_pages_free|\
+innodb_buffer_pool_pages_total|\
+innodb_buffer_pool_reads|\
+innodb_buffer_pool_read_requests|\
+bytes_sent|\
+bytes_received|\
+innodb_rows_';" 2>/dev/null)"
+
+  # 记录返回值
+  return_code=$?
+
+  # 检查返回值，MySQL OK：0
+  [ ${return_code} -ne 0 ] && echo '数据库状态异常，请尽快检查！' && exit ${return_code}
+
+  # 将检查结果格式化为变量
+  MySQL_Status=$(echo ${MySQL_Status}|sed -e 's/<TR><TD>/\n/g' -e 's/<\/TD><TD>/=/g'|sed -e 's/<.*>$//g' -e '/^$/d')
+
+  # 导入检查结果
+  export $(echo ${MySQL_Status})
+
+  # 获取MySQL Server Version
+  MySQL_Version="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e '
+  select version();' 2>/dev/null|\
+  tail -1)"
+  MySQL_Version="MySQL_${MySQL_Version}"
+
+  # 检查并存储从库同步状态，主库：MYSQL_Mode = 0，从库：MYSQL_Mode = 1
+  if [ ${MYSQL_Mode} -eq 1 ];then
+    Slave_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
+    show slave status\G;" 2>/dev/null|\
+    grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*'|\
+    sed -e 's/: /=/g' -e 's/=\([A-Za-z]*$\)/="\1"/g'|\
+    tr '\n' ','|\
+    sed 's/,$//g')"
+  else
+    Slave_Status='Slave_IO_Running="NULL",Slave_SQL_Running="NULL",Seconds_Behind_Master=0'
+  fi
+
+  # 获取上一次检查部分状态数值
+  Last_Uptime=$(influx_mysql_status Uptime)
+  Last_Bytes_received=$(influx_mysql_status Bytes_received)
+  Last_Bytes_sent=$(influx_mysql_status Bytes_sent)
+  Last_Questions=$(influx_mysql_status Questions)
+  Last_Slow_queries=$(influx_mysql_status Slow_queries)
+  Last_Com_commit=$(influx_mysql_status Com_commit)
+  Last_Com_rollback=$(influx_mysql_status Com_rollback)
+  Last_Innodb_rows_read=$(influx_mysql_status Innodb_rows_read)
+  Last_Innodb_rows_inserted=$(influx_mysql_status Innodb_rows_inserted)
+  Last_Innodb_rows_deleted=$(influx_mysql_status Innodb_rows_deleted)
+  Last_Innodb_rows_updated=$(influx_mysql_status Innodb_rows_updated)
+
+  # 检查MySQL是否重启
+  if [ $(echo ${Uptime} ${Last_Uptime}|awk '{print $1<$2}') -eq 1 ];then
+    Last_Uptime=0
+    Last_Bytes_received=0
+    Last_Bytes_sent=0
+    Last_Questions=0
+    Last_Slow_queries=0
+    Last_Com_commit=0
+    Last_Com_rollback=0
+    Last_Innodb_rows_read=0
+    Last_Innodb_rows_inserted=0
+    Last_Innodb_rows_deleted=0
+    Last_Innodb_rows_updated=0
+  fi
+
+  # 每秒查询数
+  QPS=$(echo ${Questions} ${Last_Questions} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # 每秒事务数
+  TPS=$(echo ${Com_commit} ${Last_Com_commit} ${Com_rollback} ${Last_Com_rollback} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",(($1-$2)+($3-$4))/($5-$6)}')
+
+  # 每秒慢查询数
+  Slow_queries_per_sec=$(echo ${Slow_queries} ${Last_Slow_queries} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # 每秒接收字节数
+  Bytes_received_per_sec=$(echo ${Bytes_received} ${Last_Bytes_received} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # 每秒发送字节数
+  Bytes_sent_per_sec=$(echo ${Bytes_sent} ${Last_Bytes_sent} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # InnoDB读命中率
+  Innodb_reads_hitrate=$(echo ${Innodb_buffer_pool_reads} ${Innodb_buffer_pool_read_requests}|\
+  awk '{printf "%0.2f\n",(1-$1/$2)*100}')
+
+  # InnoDB使用率
+  Innodb_use_rate=$(echo ${Innodb_buffer_pool_pages_free} ${Innodb_buffer_pool_pages_total}|\
+  awk '{printf "%0.2f\n",(1-$1/$2)*100}')
+
+  # InnoDB脏块率
+  Innodb_dirty_rate=$(echo ${Innodb_buffer_pool_pages_dirty} ${Innodb_buffer_pool_pages_total}|\
+  awk '{printf "%0.2f\n",$1/$2*100}')
+
+  # InnoDB每秒查询次数
+  Innodb_rows_read_per_sec=$(echo ${Innodb_rows_read} ${Last_Innodb_rows_read} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # InnoDB每秒插入次数
+  Innodb_rows_inserted_per_sec=$(echo ${Innodb_rows_inserted} ${Last_Innodb_rows_inserted} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # InnoDB每秒删除次数
+  Innodb_rows_deleted_per_sec=$(echo ${Innodb_rows_deleted} ${Last_Innodb_rows_deleted} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # InnoDB每秒更新次数
+  Innodb_rows_updated_per_sec=$(echo ${Innodb_rows_updated} ${Last_Innodb_rows_updated} ${Uptime} ${Last_Uptime}|\
+  awk '{printf "%0.2f\n",($1-$2)/($3-$4)}')
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+MySQL_Status,\
+Host=${Host},\
+MySQL_Port=${Port},\
+MySQL_Mode=${MYSQL_Mode},\
+MySQL_Status=${return_code} \
+Uptime=${Uptime},\
+MySQL_Version=\"${MySQL_Version}\",\
+Questions=${Questions},\
+Slow_queries=${Slow_queries},\
+Slow_queries_per_sec=${Slow_queries_per_sec},\
+Threads_connected=${Threads_connected},\
+Threads_cached=${Threads_cached},\
+Threads_created=${Threads_created},\
+Bytes_received=${Bytes_received},\
+Bytes_received_per_sec=${Bytes_received_per_sec},\
+Bytes_sent=${Bytes_sent},\
+Bytes_sent_per_sec=${Bytes_sent_per_sec},\
+Com_commit=${Com_commit},\
+Com_rollback=${Com_rollback},\
+Innodb_buffer_pool_pages_dirty=${Innodb_buffer_pool_pages_dirty},\
+Innodb_buffer_pool_pages_free=${Innodb_buffer_pool_pages_free},\
+Innodb_buffer_pool_pages_total=${Innodb_buffer_pool_pages_total},\
+Innodb_buffer_pool_read_requests=${Innodb_buffer_pool_read_requests},\
+Innodb_buffer_pool_reads=${Innodb_buffer_pool_reads},\
+Innodb_rows_deleted=${Innodb_rows_deleted},\
+Innodb_rows_inserted=${Innodb_rows_inserted},\
+Innodb_rows_read=${Innodb_rows_read},\
+Innodb_rows_updated=${Innodb_rows_updated},\
+QPS=${QPS},\
+TPS=${TPS},\
+Innodb_reads_hitrate=${Innodb_reads_hitrate},\
+Innodb_use_rate=${Innodb_use_rate},\
+Innodb_dirty_rate=${Innodb_dirty_rate},\
+Innodb_rows_read_per_sec=${Innodb_rows_read_per_sec},\
+Innodb_rows_inserted_per_sec=${Innodb_rows_inserted_per_sec},\
+Innodb_rows_deleted_per_sec=${Innodb_rows_deleted_per_sec},\
+Innodb_rows_updated_per_sec=${Innodb_rows_updated_per_sec},\
+${Slave_Status}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo "Version:${MySQL_Version};Uptime:${Uptime}s;Threads_connected:${Threads_connected};Questions:${Questions};QPS:${QPS};TPS:${TPS};Slow_queries:${Slow_queries_per_sec}/s"
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_mysql_health(){
+  # 执行检查并存储检查结果
+  result=$(influx_mysql_status ${MYSQL_Health})
+
+  # 存储返回值
+  return_code=$?
+
+  if [ ${return_code} -eq 0 ];then
+    case ${MYSQL_Health} in
+      # 已用连接数
+      Threads_connected)
+        digital_compare ${result} ${Warning} ${Critical}
+        # 存储返回值
+        return_code=$?
+        comment="当前已使用连接数：${result}"
+        ;;
+      # 每秒慢查询
+      Slow_queries_per_sec)
+        digital_compare ${result} ${Warning} ${Critical}
+        # 存储返回值
+        return_code=$?
+        comment="平均每秒慢查询：${result}"
+        ;;
+      # 从库数据与主库数据时间差
+      Seconds_Behind_Master)
+        digital_compare ${result} ${Warning} ${Critical}
+        # 存储返回值
+        return_code=$?
+        comment="当前从库与主库数据时间差：${result}秒"
+        ;;
+      # 从库状态
+      Slave_IO_Running|Slave_SQL_Running)
+        if [ "X${result}" == "XYes" ];then
+          return_code=0
+        else
+          return_code=1
+        fi
+        comment="从库${MYSQL_Health}状态：${result}"
+    esac
+  else
+    comment='查询异常，请检查service配置！'
+  fi
+
+  # 输出检查结果
+  echo ${comment}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+check_mysql_data(){
+  # 加载SQL语句定义文件
+  source /usr/local/nagios/etc/data_sql.list || error_msg
+
+  # 执行查询语句并存储查询结果
+  result=$(mysql -h${Host} -P${Port} -u"${MYSQL_User}" -p"${MYSQL_Pwd}" -D"${MYSQL_Database}" -e "${!MYSQL_Select}" 2>/dev/null)
+
+  # 存储返回值
+  return_code=$?
+
+  # 根据返回值判断查询是否成功
+  if [ ${return_code} -eq 0 ];then
+    # 过滤查询结果
+    result=$(echo ${result}|awk '{print $NF}'|tail -1)
+    # 检查查询结果是否为数字
+    check_code=$(py_isdigit ${result})
+    # 查询结果为数字
+    if [ ${check_code} -eq 0 ];then
+      # 特定SQL语句1告警条件
+      if [ ${MYSQL_Select} == 'SQL_xxxxx' ];then
+        comment='PASS'
+      # 特定SQL语句2告警条件
+      elif [ ${MySQL_Select} == 'SQL_yyyy' ];then
+        comment='PASS'
+      # 默认为业务数据，判定条件：查询结果为0时发送告警
+      else
+        comment="${MYSQL_Comment}: ${result}${MYSQL_Unit}"
+        [ ${result} -eq 0 ] && return_code=1
+      fi
+      # 将检查结果写入 Influxdb
+      curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+      --data-binary "\
+Business_Data,\
+Host=${Host},\
+i_Data_Name=${MYSQL_Data},\
+j_Data_Status=${return_code},\
+k_Data_Comment=${MYSQL_Comment},\
+l_Data_Unit=${MYSQL_Unit} \
+m_Data_Value=${result}" \
+&>/dev/null
+    # 查询结果为非数字
+    else
+      comment='查询结果异常，请确认SQL语句是否正确！'
+      return_code=1
+    fi
+  # 查询失败
+  else
+    comment='查询异常，请确认数据库是否启动或者SQL语句是否正确！'
+    return_code=2
+  fi
+
+  # 输出检查结果
+  echo ${comment}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+system_info(){
+  case ${NCPA_Path} in
+    Windows)
+      # 操作系统版本
+      OS_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo.bat/system"|sed 's/^OS Name: *\(M.*\)$/\1/g')
+      # 内核版本
+      Kernel_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo.bat/kernel"|sed 's/^OS Version: *\(.*\)$/\1/g')
+      # CPU核心数
+      Cores_Count=$(py_sum $(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo.bat/cpu"|grep -v ^$|tr '\n' ','|sed -e 's/ //g' -e 's/,$//g'))
+      # 磁盘总量
+      #Disk_Total="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      #-M "disk/logical" -u Ki -l|sed 's/ //g'|sed ":a;N;s/\[\n//g;ta"|grep -E '[A-Z]:\||total'|tr '\n' '='|sed -e 's/total//g' -e 's/["{:|]//g' -e 's/,=/,/g' -e 's/,$//g')"
+      ;;
+    Linux)
+      # 操作系统版本
+      OS_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo/system")
+      # 内核版本
+      Kernel_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo/kernel")
+      # CPU核心数
+      Cores_Count=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo/cpu")
+      # 磁盘总量
+      #Disk_Total="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      #-M "disk/logical" -u Ki -l|sed 's/ //g'|sed ":a;N;s/\[\n//g;ta"|grep -E '\||\|[a-zA-Z]|total'|tr '\n' '='|sed -e 's/total//g' -e 's/["{:]//g' -e 's/,=/,/g' -e 's/|/\//g' -e 's/,$//g')"
+  esac
+
+  # 系统启动时间
+  Uptime=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+    -M "system/uptime"|awk -F= '{print $NF}'|sed 's/[s;]//g')
+  return_code=$?
+  if [ ${return_code} -eq 0 ];then
+    System_status='OK'
+  else
+    System_status='Warning'
+  fi
+
+  # 内存总量
+  #Memory_Total=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+    #-M "memory/virtual/total" -u Ki|awk '{print $4}')
+
+  # 总进程数
+  Processes_Total="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+  -M "processes"|head -1|awk '{print $7}'|sed "s/[';]//g"|awk -F= '{print $NF}')"
+
+  # 将检查结果写入 Influxdb
+  curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+  --data-binary "\
+System_Info,\
+Host=${Host},\
+i_System_Status=${System_status},\
+m_Uptime_Unit=s \
+j_OS_Version=\"$(echo ${OS_Version}|sed 's/ /_/g')\",\
+k_Kernel_Version=\"$(echo ${Kernel_Version}|sed 's/ /_/g')\",\
+l_Uptime=${Uptime},\
+n_Cores=${Cores_Count},\
+o_Processes_Total=${Processes_Total}" \
+&>/dev/null
+
+  # 输出检查结果
+  echo "System ${System_status}"
+
+  # 退出脚本
+  exit ${return_code}
+}
+
+# 执行检查
+case ${Node} in
+  cpu)
+    check_cpu
+    ;;
+  memory)
+    check_mem
+    ;;
+  disk)
+    check_disk
+    ;;
+  IO)
+    check_IO
+    ;;
+  interface)
+    check_interface
+    ;;
+  system)
+    system_info
+    ;;
+  nagios_plugins)
+    ${NAGIOS_Plugin}
+    ;;
+  website)
+    check_http
+    ;;
+  mysql_status)
+    check_mysql_status
+    ;;
+  mysql_data)
+    check_mysql_data
+    ;;
+  mysql_health)
+    check_mysql_health
+esac
