@@ -11,7 +11,11 @@ yum -y install gcc glibc glibc-common openssl-devel
 #### 3、编译安装
 ```shell
 tar xf nginx-1.26.2.tar.gz
+```
+```shell
 cd nginx-1.26.2
+```
+```shell
 ./configure \
 --prefix=/usr/local/nginx \
 --with-http_v2_module \
@@ -32,7 +36,7 @@ cd nginx-1.26.2
 --with-stream \
 --with-http_ssl_module \
 --with-mail_ssl_module \
---with-stream_ssl_module
+--with-stream_ssl_module && \
 make && make install
 ```
 
