@@ -40,7 +40,7 @@ add-apt-repository ppa:ondrej/php
 
 #### 安装PHP8及其依赖包
 ```shell
-apt install php8.3 php8.3-fpm
+apt install php8.3 php8.3-fpm apache2-utils
 ```
 >`在线安装可能因为网络原因安装失败，可使用本项目提供的离线deb包`
 
