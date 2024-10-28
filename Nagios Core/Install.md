@@ -51,3 +51,8 @@ echo "nagios:$(openssl passwd -salt 'xxxxXXXX' -apr1 Password@abc123)" >/usr/loc
 ```shell
 sed -i 's/nagiosadmin/nagios/g' /usr/local/nagios/etc/cgi.cfg
 ```
+
+### 启动
+```shell
+systemctl enable --now nagios
+```
