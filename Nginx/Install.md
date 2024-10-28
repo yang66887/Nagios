@@ -19,7 +19,17 @@ yum install epel-release
 ```
 >`安装依赖`
 ```shell
-yum install gcc openssl-devel fcgi fcgiwrap spawn-fcgi
+yum install gcc pcre-devel openssl-devel fcgi fcgiwrap spawn-fcgi
+```
+
+### ***For EL8***
+>`添加epel源`
+```shell
+yum install epel-release
+```
+>`安装依赖`
+```shell
+yum install tar make gcc pcre-devel openssl-devel fcgi fcgiwrap spawn-fcgi
 ```
 
 ### 编译安装
@@ -107,7 +117,7 @@ vi /usr/local/nginx/conf/nginx.conf
 ```
 >`创建spawn-fcgi配置文件`
 ```shell
-cat >>/etc/sysconfig/spawn-fcgi <<EOF
+cat >/etc/sysconfig/spawn-fcgi <<EOF
 FCGI_SOCKET=/var/run/fcgiwrap.socket
 FCGI_PROGRAM=$(which fcgiwrap)
 FCGI_USER=nobody
@@ -123,7 +133,7 @@ EOF
 ```
 >`创建nginx.service`
 ```shell
-cat >>/usr/lib/systemd/system/nginx.service <<EOF
+cat >/usr/lib/systemd/system/nginx.service <<EOF
 [Unit]
 Description=nginx - high performance web server
 After=network.target remote-fs.target nss-lookup.target
