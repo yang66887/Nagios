@@ -18,6 +18,10 @@ yum install gcc gd-devel perl unzip
 ```
 
 ### 编译安装
+>`创建Nagios账号`
+```shell
+useradd -M -s /sbin/nologin nagios
+```
 >`解压源码包`
 ```shell
 tar xf nagios-4.5.7.tar.gz
