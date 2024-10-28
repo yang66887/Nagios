@@ -14,7 +14,7 @@ curl -o nagios-4.5.7.tar.gz https://assets.nagios.com/downloads/nagioscore/relea
 ### 安装依赖包
 #### ***For EL7***
 ```shell
-yum install gcc gd-devel perl unzip
+yum install gcc gd-devel perl unzip openssl-devel
 ```
 
 ### 编译安装
