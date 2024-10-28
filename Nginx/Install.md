@@ -22,7 +22,7 @@ yum install epel-release
 yum install gcc openssl-devel fcgi fcgiwrap spawn-fcgi
 ```
 
-## 编译安装
+### 编译安装
 >`解压源码包`
 ```shell
 tar xf nginx-1.26.2.tar.gz
