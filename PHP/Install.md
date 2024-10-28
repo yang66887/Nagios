@@ -1,4 +1,4 @@
-# Install PHP8
+# Install PHP 8
 
 ### 官网页面
 >`Current Stable Version`
