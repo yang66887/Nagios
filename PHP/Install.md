@@ -16,6 +16,10 @@ curl -o php-8.3.13.tar.gz https://www.php.net/distributions/php-8.3.13.tar.gz
 ```shell
 yum install gcc libxml2-devel sqlite-devel
 ```
+#### ***For EL8***
+```shell
+yum -y install tar make gcc libxml2-devel sqlite-devel
+```
 
 ### 编译安装
 >`解压源码包`
