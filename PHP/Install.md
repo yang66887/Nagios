@@ -20,6 +20,10 @@ yum install gcc libxml2-devel sqlite-devel
 ```shell
 yum -y install tar make gcc libxml2-devel sqlite-devel
 ```
+#### ***For Ubuntu 22***
+```shell
+apt install make gcc libxml2-dev pkg-config libsqlite3-dev
+```
 
 ### 编译安装
 >`解压源码包`
@@ -32,7 +36,11 @@ cd php-8.3.13
 ```
 >`编译并安装`
 ```shell
-./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-sockets --enable-fpm \
+./configure \
+--prefix=/usr/local/php \
+--with-config-file-path=/usr/local/php/etc \
+--enable-sockets \
+--enable-fpm \
 && make \
 && make install
 ```
@@ -53,7 +61,7 @@ cat >/usr/local/php/etc/php-fpm.d/nagios.conf <<EOF
 [nagios]
 listen = /usr/local/php/var/run/nagios.socket
 listen.owner = nobody
-listen.group = nobody
+listen.group = $(groups nobody|awk '{print $3}')
 listen.mode=0660
 listen.allowed_clients = 127.0.0.1
 
