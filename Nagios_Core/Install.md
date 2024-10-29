@@ -18,7 +18,11 @@ yum install gcc gd-devel perl unzip openssl-devel
 ```
 #### ***For EL8***
 ```shell
-yum install tar make gcc gd-devel openssl-devel
+yum install tar make gcc gd-devel unzip openssl-devel
+```
+#### ***For Ubuntu 22***
+```shell
+apt install make gcc libssl-dev libgd-dev unzip
 ```
 
 ### 编译安装
