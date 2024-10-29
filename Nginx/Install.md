@@ -32,6 +32,11 @@ yum install epel-release
 yum install tar make gcc pcre-devel openssl-devel fcgi fcgiwrap spawn-fcgi
 ```
 
+### ***For Ubuntu 22***
+```shell
+apt install vim make gcc libssl-dev libpcre2-dev zlib1g-dev fcgiwrap
+```
+
 ### 编译安装
 >`解压源码包`
 ```shell
@@ -115,22 +120,6 @@ vi /usr/local/nginx/conf/nginx.conf
     }
   }
 ```
->`创建spawn-fcgi配置文件`
-```shell
-cat >/etc/sysconfig/spawn-fcgi <<EOF
-FCGI_SOCKET=/var/run/fcgiwrap.socket
-FCGI_PROGRAM=$(which fcgiwrap)
-FCGI_USER=nobody
-FCGI_GROUP=nobody
-FCGI_EXTRA_OPTIONS="-M 0700"
-OPTIONS="-u \$FCGI_USER -g \
-\$FCGI_GROUP -s \
-\$FCGI_SOCKET -S \
-\$FCGI_EXTRA_OPTIONS \
--F 1 -P /var/run/spawn-fcgi.pid -- \
-\$FCGI_PROGRAM"
-EOF
-```
 >`创建nginx.service`
 ```shell
 cat >/usr/lib/systemd/system/nginx.service <<EOF
@@ -147,14 +136,34 @@ ExecStop=/usr/local/nginx/sbin/nginx -s stop
 EOF
 ```
 
+#### ***For EL7 & EL8***
+>`创建spawn-fcgi配置文件`
+```shell
+cat >/etc/sysconfig/spawn-fcgi <<EOF
+FCGI_SOCKET=/var/run/fcgiwrap.socket
+FCGI_PROGRAM=$(which fcgiwrap)
+FCGI_USER=nobody
+FCGI_GROUP=$(groups nobody|awk '{print $3}')
+FCGI_EXTRA_OPTIONS="-M 0700"
+OPTIONS="-u \$FCGI_USER -g \
+\$FCGI_GROUP -s \
+\$FCGI_SOCKET -S \
+\$FCGI_EXTRA_OPTIONS \
+-F 1 -P /var/run/spawn-fcgi.pid -- \
+\$FCGI_PROGRAM"
+EOF
+```
+
 
 ### 启动
+>`Nginx`
+```shell
+systemctl enable --now nginx
+```
+
+#### ***For EL7 & EL8***
 >`Spawn-fcgi`
 ```shell
 chkconfig --level 35 spawn-fcgi on
 systemctl start spawn-fcgi
-```
->`Nginx`
-```shell
-systemctl enable --now nginx
 ```
