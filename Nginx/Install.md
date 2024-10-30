@@ -8,7 +8,7 @@ https://nginx.org/en/download.html
 
 ### 下载源码包
 ```shell
-curl -s -o nginx-1.26.2.tar.gz https://nginx.org/download/nginx-1.26.2.tar.gz
+curl -o nginx-1.26.2.tar.gz https://nginx.org/download/nginx-1.26.2.tar.gz
 ```
 
 ### 安装依赖包
