@@ -18,7 +18,7 @@ yum install gcc libxml2-devel sqlite-devel
 ```
 #### ***For EL8***
 ```shell
-yum -y install tar make gcc libxml2-devel sqlite-devel
+yum install tar make gcc libxml2-devel sqlite-devel
 ```
 #### ***For Ubuntu 22***
 ```shell
