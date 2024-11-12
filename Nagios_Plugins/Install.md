@@ -42,3 +42,19 @@ cd nagios-plugins-2.4.12
 && make all \
 && make install
 ```
+
+### 安装NCPA检查插件
+>`下载插件压缩包`
+```shell
+curl -o check_ncpa.tar.gz 'https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz'
+```
+>`解压并拷贝到Nagios插件目录`
+```shell
+tar xf check_ncpa.tar.gz
+mv check_ncpa.py /usr/local/nagios/libexec
+```
+>`修改插件权限`
+```shell
+chown nagios:nagios /usr/local/nagios/libexec/check_ncpa
+chmod 755 /usr/local/nagios/libexec/check_ncpa
+```
