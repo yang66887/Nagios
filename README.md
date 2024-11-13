@@ -1,6 +1,15 @@
 ## Nagios Core + Nagios Plugins + NCPA + InfluxDB + Nginx +Grafana
 
+### 部署架构
 ![image](./IMG/Nagios_Server.png)
+
+### Grafana效果示例
+![image](./IMG/Grafana_1.png)
+![image](./IMG/Grafana_2.png)
+![image](./IMG/Grafana_3.png)
+![image](./IMG/Grafana_4.png)
+![image](./IMG/Grafana_5.png)
+![image](./IMG/Grafana_6.png)
 
 ## For Nagios Server
 
