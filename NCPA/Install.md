@@ -52,7 +52,7 @@ wget https://github.com/yang66887/Nagios/raw/refs/heads/main/NCPA/ncpa_3.1.1-1_a
 ```
 >`安装`
 ```shell
-rpm -ivh ncpa_3.1.1-1_amd64.deb
+dpkg -i ncpa_3.1.1-1_amd64.deb
 ```
 
 ### 配置
