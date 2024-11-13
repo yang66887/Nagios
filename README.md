@@ -1,5 +1,7 @@
 ### Nagios Core + Nagios Plugins + NCPA + InfluxDB + Nginx +Grafana
 
+![image](./IMG/Nagios.png)
+
 1、[Install Nagios Core](./Nagios_Core/Install.md)
 
 2、[Install PHP 8](./PHP/Install.md)
