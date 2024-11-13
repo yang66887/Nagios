@@ -9,3 +9,5 @@
 3、[Install Nginx](./Nginx/Install.md)
 
 4、[Install Nagios Plugins](./Nagios_Plugins/Install.md)
+
+5、[Install NCPA](./NCPA/Install.md)
