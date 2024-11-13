@@ -1,6 +1,8 @@
-### Nagios Core + Nagios Plugins + NCPA + InfluxDB + Nginx +Grafana
+## Nagios Core + Nagios Plugins + NCPA + InfluxDB + Nginx +Grafana
 
 ![image](./IMG/Nagios_Server.png)
+
+## For Nagios Server
 
 1、[Install Nagios Core](./Nagios_Core/Install.md)
 
@@ -10,4 +12,6 @@
 
 4、[Install Nagios Plugins](./Nagios_Plugins/Install.md)
 
-5、[Install NCPA](./NCPA/Install.md)
+## For NCPA Server
+
+1、[Install NCPA](./NCPA/Install.md)
