@@ -14,6 +14,17 @@ https://github.com/NagiosEnterprises/ncpa
 https://support.nagios.com/kb/article/ncpa-how-to-build-ncpa-from-source-521.html
 ```
 
+## 前期准备
+>`生成NCPA认证所需的Token值`
+>`记录以下命令生成的字符串`
+>`配置NCPA时输入`
+>`所有服务器要求使用相同的Token值`
+```shell
+cat /proc/sys/kernel/random/uuid
+```
+
+## For Linux
+
 ### 安装依赖包
 #### ***For EL7 & EL8***
 ```shell
@@ -47,9 +58,22 @@ rpm -ivh ncpa_3.1.1-1_amd64.deb
 ### 配置
 >`修改默认Token值`
 ```shell
-sed -i 's/mytoken/xxxxXXXXXXXX/g' /usr/local/ncpa/etc/ncpa.cfg
+sed -i 's/mytoken/生成的Token值/g' /usr/local/ncpa/etc/ncpa.cfg
 ```
 >`重启NCPA服务`
 ```shell
 systemctl restart ncpa
 ```
+
+## For Windows
+
+### 下载安装包
+>`官网下载地址`
+```shell
+https://assets.nagios.com/downloads/ncpa3/ncpa-latest.exe
+```
+
+### 安装
+>`双击开始安装`
+>`输入生成的Token值`
+>`其余选项默认`
