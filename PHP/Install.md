@@ -76,7 +76,7 @@ pm.max_spare_servers = 35
 slowlog = /usr/local/php/var/log/nagios-slow.log
 
 php_flag[display_errors] = on
-php_admin_value[error_log] = //usr/local/php/var/log/nagios-error.log
+php_admin_value[error_log] = /usr/local/php/var/log/nagios-error.log
 php_admin_flag[log_errors] = on
 php_admin_flag[expose_php] = off
 php_value[session.save_handler] = files
