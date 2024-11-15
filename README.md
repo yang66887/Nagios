@@ -21,6 +21,8 @@
 
 4、[Install Nagios Plugins](./Nagios_Plugins/Install.md)
 
+5、[Install InfluxDB](./InfluxDB/Install.md)
+
 ## For NCPA Server
 
 1、[Install NCPA](./NCPA/Install.md)
