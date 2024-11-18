@@ -25,8 +25,7 @@
     {
       "collapsed": true,
       "datasource": {
-        "type": "influxdb",
-        "uid": "ddt6xxfwcd6v4c"
+        "type": "influxdb"
       },
       "gridPos": {
         "h": 1,
@@ -38,8 +37,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -90,8 +89,8 @@
             {
               "alias": "操作系统版本",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -139,8 +138,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -191,8 +190,8 @@
             {
               "alias": "内核版本",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -240,8 +239,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -311,8 +310,8 @@
             {
               "alias": "上传流量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -368,8 +367,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -439,8 +438,8 @@
             {
               "alias": "下载流量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -496,8 +495,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -607,8 +606,8 @@
             {
               "alias": "CPU使用率",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [],
               "hide": false,
@@ -640,8 +639,8 @@
             {
               "alias": "Load 1",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [],
               "measurement": "Cpu_Load",
@@ -672,8 +671,8 @@
             {
               "alias": "Load 5",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [],
               "hide": false,
@@ -705,8 +704,8 @@
             {
               "alias": "Load 15",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [],
               "hide": false,
@@ -740,8 +739,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -792,8 +791,8 @@
             {
               "alias": "启动时间",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -841,8 +840,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -907,8 +906,8 @@
             {
               "alias": "CPU核心数",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -958,8 +957,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -1023,8 +1022,8 @@
             {
               "alias": "/ 分区总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1072,8 +1071,8 @@
             {
               "alias": "/boot 分区总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1122,8 +1121,8 @@
             {
               "alias": "/data 分区总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1172,8 +1171,8 @@
             {
               "alias": "/db_log 分区总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1222,8 +1221,8 @@
             {
               "alias": "/db_data 分区总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1272,8 +1271,8 @@
             {
               "alias": "C盘总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1322,8 +1321,8 @@
             {
               "alias": "E盘总容量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1374,8 +1373,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -1435,8 +1434,8 @@
             {
               "alias": "已用内存",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1484,8 +1483,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -1555,8 +1554,8 @@
             {
               "alias": "可用内存",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1606,8 +1605,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -1662,8 +1661,8 @@
             {
               "alias": "总进程数",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -1713,8 +1712,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -1775,8 +1774,8 @@
             {
               "alias": "总内存",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [],
               "measurement": "Memory_Usage",
@@ -1811,8 +1810,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "refId": "A"
         }
@@ -1823,8 +1822,7 @@
     {
       "collapsed": true,
       "datasource": {
-        "type": "influxdb",
-        "uid": "ddt6xxfwcd6v4c"
+        "type": "influxdb"
       },
       "gridPos": {
         "h": 1,
@@ -1836,8 +1834,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -2009,8 +2007,8 @@
             {
               "alias": "CPUs",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2056,8 +2054,8 @@
             {
               "alias": "Load 1",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2104,8 +2102,8 @@
             {
               "alias": "Load 5",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2152,8 +2150,8 @@
             {
               "alias": "Load 15",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2203,8 +2201,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -2321,8 +2319,8 @@
             {
               "alias": "下载",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2374,8 +2372,8 @@
             {
               "alias": "上传",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2430,8 +2428,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -2594,8 +2592,8 @@
             {
               "alias": "已用内存",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2641,8 +2639,8 @@
             {
               "alias": "可用内存",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2689,8 +2687,8 @@
             {
               "alias": "最大内存",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2737,8 +2735,8 @@
             {
               "alias": "Used %",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2788,8 +2786,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -2881,8 +2879,8 @@
             {
               "alias": "Total",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -2933,8 +2931,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "refId": "A"
         }
@@ -2954,8 +2952,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -3101,8 +3099,8 @@
           "targets": [
             {
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -3153,8 +3151,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -3306,8 +3304,8 @@
             {
               "alias": "$Drive_Name Read",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -3365,8 +3363,8 @@
             {
               "alias": "$Drive_Name Write",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -3427,8 +3425,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -3538,8 +3536,8 @@
             {
               "alias": "$Partition_Name 已使用空间",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -3591,8 +3589,8 @@
             {
               "alias": "$Partition_Name 空闲空间",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -3662,8 +3660,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -3898,8 +3896,8 @@
             {
               "alias": "",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -3964,8 +3962,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4096,8 +4094,8 @@
             {
               "alias": "$Web_Name Http Code",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4149,8 +4147,8 @@
             {
               "alias": "$Web_Name Response Time",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4220,8 +4218,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4272,8 +4270,8 @@
             {
               "alias": "数据库版本",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4321,8 +4319,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4392,8 +4390,8 @@
             {
               "alias": "数据流入",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4443,8 +4441,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4514,8 +4512,8 @@
             {
               "alias": "QPS",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4565,8 +4563,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4683,8 +4681,8 @@
             {
               "alias": "流入",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4730,8 +4728,8 @@
             {
               "alias": "流出",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4780,8 +4778,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4832,8 +4830,8 @@
             {
               "alias": "启动时间",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -4881,8 +4879,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -4952,8 +4950,8 @@
             {
               "alias": "数据流出",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5003,8 +5001,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -5074,8 +5072,8 @@
             {
               "alias": "TPS",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5125,8 +5123,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -5196,8 +5194,8 @@
             {
               "alias": "连接数",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5247,8 +5245,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -5318,8 +5316,8 @@
             {
               "alias": "慢查询",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5369,8 +5367,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -5571,8 +5569,8 @@
             {
               "alias": "QPS",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5618,8 +5616,8 @@
             {
               "alias": "TPS",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5665,8 +5663,8 @@
             {
               "alias": "慢查询",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5713,8 +5711,8 @@
             {
               "alias": "当前连接数",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5761,8 +5759,8 @@
             {
               "alias": "创建连接数",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5809,8 +5807,8 @@
             {
               "alias": "缓存连接数",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -5860,8 +5858,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -5993,8 +5991,8 @@
             {
               "alias": "命中率",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6040,8 +6038,8 @@
             {
               "alias": "使用率",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6087,8 +6085,8 @@
             {
               "alias": "脏块率",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6138,8 +6136,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -6286,8 +6284,8 @@
             {
               "alias": "查询",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6333,8 +6331,8 @@
             {
               "alias": "插入",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6380,8 +6378,8 @@
             {
               "alias": "删除",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6428,8 +6426,8 @@
             {
               "alias": "更新",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6493,8 +6491,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -6674,8 +6672,8 @@
             {
               "alias": "",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6740,8 +6738,8 @@
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "ddt6xxfwcd6v4c"
+            "type": "influxdb"
+    
           },
           "fieldConfig": {
             "defaults": {
@@ -6823,8 +6821,8 @@
             {
               "alias": "$Data_Name 最新数据量",
               "datasource": {
-                "type": "influxdb",
-                "uid": "ddt6xxfwcd6v4c"
+                "type": "influxdb"
+        
               },
               "groupBy": [
                 {
@@ -6897,8 +6895,8 @@
           "value": "192.168.1.180"
         },
         "datasource": {
-          "type": "influxdb",
-          "uid": "ddt6xxfwcd6v4c"
+          "type": "influxdb"
+  
         },
         "definition": "SHOW TAG VALUES WITH KEY = \"Host\"",
         "hide": 0,
@@ -6927,8 +6925,8 @@
           "value": "Nginx5"
         },
         "datasource": {
-          "type": "influxdb",
-          "uid": "ddt6xxfwcd6v4c"
+          "type": "influxdb"
+  
         },
         "definition": "show tag values with key=\"i_Web_Name\"",
         "hide": 0,
@@ -6954,8 +6952,8 @@
           "value": "sda"
         },
         "datasource": {
-          "type": "influxdb",
-          "uid": "ddt6xxfwcd6v4c"
+          "type": "influxdb"
+  
         },
         "definition": "show tag values with key = \"i_Drive_Name\"",
         "hide": 0,
@@ -6981,8 +6979,8 @@
           "value": "/"
         },
         "datasource": {
-          "type": "influxdb",
-          "uid": "ddt6xxfwcd6v4c"
+          "type": "influxdb"
+  
         },
         "definition": "show tag values with key = \"i_Partition_Name\"",
         "hide": 0,
@@ -7008,8 +7006,8 @@
           "value": "业务数据测试1"
         },
         "datasource": {
-          "type": "influxdb",
-          "uid": "ddt6xxfwcd6v4c"
+          "type": "influxdb"
+  
         },
         "definition": "show tag values with key=\"i_Data_Name\"",
         "hide": 0,
