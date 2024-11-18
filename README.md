@@ -23,6 +23,8 @@
 
 5、[Install InfluxDB](./InfluxDB/Install.md)
 
+6、[Install Grafana](./Grafana/Install.md)
+
 ## For NCPA Server
 
 1、[Install NCPA](./NCPA/Install.md)
