@@ -3,14 +3,6 @@
 ### 部署架构
 ![image](./IMG/Nagios_Server.png)
 
-### Grafana效果示例
-![image](./IMG/Grafana_1.png)
-![image](./IMG/Grafana_2.png)
-![image](./IMG/Grafana_3.png)
-![image](./IMG/Grafana_4.png)
-![image](./IMG/Grafana_5.png)
-![image](./IMG/Grafana_6.png)
-
 ## For Nagios Server
 
 1、[Install Nagios Core](./Nagios_Core/Install.md)
@@ -25,6 +17,17 @@
 
 6、[Install Grafana](./Grafana/Install.md)
 
+7、[Install Custom Plugins](./Custom_Plugins/Install.md)
+
 ## For NCPA Server
 
 1、[Install NCPA](./NCPA/Install.md)
+
+
+## Grafana效果示例
+![image](./IMG/Grafana_1.png)
+![image](./IMG/Grafana_2.png)
+![image](./IMG/Grafana_3.png)
+![image](./IMG/Grafana_4.png)
+![image](./IMG/Grafana_5.png)
+![image](./IMG/Grafana_6.png)
