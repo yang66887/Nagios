@@ -1,0 +1,11 @@
+#!/bin/bash
+
+case $1 in
+	NagiosXxx)
+		chat_Name='Nagios-xxx项目'
+		chat_Owner='群主企业微信账号'
+		chat_Userlist='["群主企业微信账号", "群成员1企业微信号", "群成员2企业微信号"]'
+		;;
+	*)
+		echo Error.
+esac

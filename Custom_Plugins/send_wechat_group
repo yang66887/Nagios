@@ -1,0 +1,236 @@
+#!/bin/bash
+
+# 设备消息示例
+# send_wechat_group $_CONTACTWECHAT$ $NOTIFICATIONTYPE$ $_HOSTGROUP$ $_HOSTCLIENTADDR$ $HOSTSTATE$ "$HOSTOUTPUT$" $HOSTALIAS$ $_HOSTTYPE$
+
+# 服务消息示例
+# send_wechat_group $_CONTACTWECHAT$ $NOTIFICATIONTYPE$ $_HOSTGROUP$ $_HOSTCLIENTADDR$ $SERVICESTATE$ "$SERVICEOUTPUT$" $HOSTALIAS$ $_SERVICETYPE$ "$SERVICEDESC$"
+
+# 告警发送记录文件
+sent_log="/usr/local/nagios/var/sent.log"
+
+# 企业微信群成员信息记录文件
+Chat_group_list="/usr/local/nagios/etc/wechat_group.list"
+
+# 企业微信应用参数
+Corpid=''
+Agent_id=''
+Agent_secret=''
+Api_domain='https://qyapi.weixin.qq.com'
+
+# 企业微信群参数
+chat_ID=$1
+source ${Chat_group_list} ${chat_ID}
+
+# 消息参数
+Time=$(date '+%Y/%m/%d %H:%M:%S')
+Type=$2
+Group=$3
+IPaddr=$4
+State=$5
+Additional_info=$6
+Device_name=$7
+Service_type=$8
+Service_name=$9
+
+# 消息类型
+case ${Service_type} in
+	Device)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Device_Warning'
+				msg_color='warning'
+				msg_title='设备异常'
+				;;
+			RECOVERY)
+				msg_type='Device_Recovery'
+				msg_color='info'
+				msg_title='设备已恢复'
+		esac
+		;;
+	Load)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Load_Warning'
+				msg_color='warning'
+				msg_title='负载异常'
+				;;
+			RECOVERY)
+				msg_type='负载已恢复'
+				msg_color='info'
+				msg_title='Load_Recovery'
+		esac
+		;;
+	App)
+		case ${Type} in
+			PROBLEM)
+				msg_type='App_Warning'
+				msg_color='warning'
+				msg_title='程序异常'
+				;;
+			RECOVERY)
+				msg_type='App_Recovery'
+				msg_color='info'
+				msg_title='程序已恢复'
+		esac
+		;;
+	Database)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Database_Warning'
+				msg_color='warning'
+				msg_title='数据库异常'
+				;;
+			RECOVERY)
+				msg_type='Database_Recovery'
+				msg_color='info'
+				msg_title='数据库已恢复'
+		esac
+		;;
+	Data)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Data_Warning'
+				msg_color='warning'
+				msg_title='业务异常'
+				;;
+			RECOVERY)
+				msg_type='Data_Recovery'
+				msg_color='info'
+				msg_title='业务已恢复'
+		esac
+esac
+
+# JSON数据处理
+py_get_json_value(){
+	key="$1"
+	json="$2"
+	/usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+Key = '${key}'
+Data = ${json}
+print(Data[Key])
+EOF
+}
+
+# 数组比对
+py_arrays_compare(){
+	list1="$1"
+	list2="$2"
+	/usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+List1 = ${list1}
+List2 = ${list2}
+if(set(List1).issubset(set(List2))):
+  print(0)
+else:
+  print(1)
+EOF
+}
+
+# 创建群聊模板
+chat_group(){
+	cat <<EOF
+{
+    "name" : "${chat_Name}",
+    "owner" : "${chat_Owner}",
+    "userlist" : ${chat_Userlist},
+    "chatid" : "${chat_ID}"
+}
+EOF
+}
+
+# 更新群聊模板
+update_chat_group(){
+	cat <<EOF
+{
+    "chatid" : "${chat_ID}",
+    "name" : "${chat_Name}",
+    "owner" : "${chat_Owner}",
+    "add_user_list" : ${chat_Userlist},
+}
+EOF
+}
+
+# 主机消息模板
+device_msg(){
+	cat <<EOF
+{
+	"chatid": "${chat_ID}",
+	"msgtype":"markdown",
+	"markdown": {
+		"content": "## <font color=\"${msg_color}\">${msg_title}</font>
+>#### ${Time}
+>
+>**项目名称：${Group}**
+>**设备名称：**<font color=\"comment\">${Device_name}</font>
+>**设备地址：**<font color=\"comment\">${IPaddr}</font>
+>**当前状态：**<font color=\"${msg_color}\">${State}</font>
+>
+>**附加信息：**<font color=\"${msg_color}\">${Additional_info}</font>"
+	}
+}
+EOF
+}
+
+# 服务消息模板
+service_msg(){
+	cat <<EOF
+{
+	"chatid": "${chat_ID}",
+	"msgtype":"markdown",
+	"markdown": {
+		"content": "## <font color=\"${msg_color}\">${msg_title}</font>
+>#### ${Time}
+>
+>**项目名称：${Group}**
+>**设备名称：**<font color=\"comment\">${Device_name}</font>
+>**设备地址：**<font color=\"comment\">${IPaddr}</font>
+>**服务名称：**<font color=\"comment\">${Service_name}</font>
+>**当前状态：**<font color=\"${msg_color}\">${State}</font>
+>
+>**附加信息：**<font color=\"${msg_color}\">${Additional_info}</font>
+"
+	}
+}
+EOF
+}
+
+# 消息主体
+case ${msg_type} in
+	Device_Warning|Device_Recovery)
+		msg_body=$(device_msg ${msg_title})
+		;;
+	Load_Warning|Load_Recovery)
+		msg_body=$(service_msg ${msg_title})
+		;;
+	App_Warning|App_Recovery)
+		msg_body=$(service_msg ${msg_title})
+		;;
+	Database_Warning|Database_Recovery)
+		msg_body=$(service_msg ${msg_title})
+		;;
+	Data_Warning|Data_Recovery)
+		msg_body=$(service_msg ${msg_title})
+esac
+
+# 获取Token
+access_token="$(py_get_json_value 'access_token' "$(curl -s "${Api_domain}/cgi-bin/gettoken?corpid=${Corpid}&corpsecret=${Agent_secret}")")"
+
+# 获取群聊参数
+get_chatInfo="$(curl -s "${Api_domain}/cgi-bin/appchat/get?access_token=${access_token}&chatid=${chat_ID}")"
+get_chatID=$(py_get_json_value 'errcode' "${get_chatInfo}")
+get_chatUserList=$(py_get_json_value 'userlist' "$(py_get_json_value 'chat_info' "${get_chatInfo}")")
+
+# 创建群聊
+if [ ${get_chatID} -ne 0 ];then
+	echo "$(date '+%Y-%m-%d %H:%M:%S') ${chat_Name} $(curl -s -XPOST -d "$(chat_group)" "${Api_domain}/cgi-bin/appchat/create?access_token=${access_token}")" >>${sent_log}
+fi
+
+# 检查群成员
+if [ ${get_chatID} -eq 0 -a $(py_arrays_compare "${chat_Userlist}" "${get_chatUserList}") -eq 1 ];then
+	echo "$(date '+%Y-%m-%d %H:%M:%S') ${chat_Name} $(curl -s -XPOST -d "$(update_chat_group)" "${Api_domain}/cgi-bin/appchat/update?access_token=${access_token}")" >>${sent_log}
+fi
+
+# 发送消息
+echo "$(date '+%Y-%m-%d %H:%M:%S') ${chat_Name} $(curl -s -XPOST -d "${msg_body}" "${Api_domain}/cgi-bin/appchat/send?access_token=${access_token}")" >>${sent_log}

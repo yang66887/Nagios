@@ -1,0 +1,222 @@
+#!/bin/bash
+
+# 设备消息示例
+# send_wechat $_CONTACTWECHAT$ $NOTIFICATIONTYPE$ $_HOSTGROUP$ $_HOSTCLIENTADDR$ $HOSTSTATE$ "$HOSTOUTPUT$" $HOSTALIAS$ $_HOSTTYPE$
+
+# 服务消息示例
+# send_wechat $_CONTACTWECHAT$ $NOTIFICATIONTYPE$ $_HOSTGROUP$ $_HOSTCLIENTADDR$ $SERVICESTATE$ "$SERVICEOUTPUT$" $HOSTALIAS$ $_SERVICETYPE$ "$SERVICEDESC$"
+
+# 告警发送记录文件
+sent_log="/usr/local/nagios/var/sent.log"
+
+# 企业微信账号记录文件
+wechat_user="/usr/local/nagios/etc/wechat_user.list"
+
+# Nagios告警详情页(公网可访问的域名，用于放置nagios.html页面)，可选项
+Nagios_URL=''
+
+# 企业微信参数
+User_account=$1
+User_name=$(awk '$2=="'${User_account}'"{print $1}' ${wechat_user})
+Corpid=''
+Agent_id=''
+Agent_secret=''
+Api_domain='https://qyapi.weixin.qq.com'
+
+# 消息参数
+Time=$(date '+%Y年%m月%d日 %H点%M分%S秒')
+Type=$2
+Group=$3
+IPaddr=$4
+State=$5
+Additional_info=$6
+Device_name=$7
+Service_type=$8
+Service_name=$9
+[ "X${Service_name}" == "X" ] && Service_name='null'
+
+# 特殊字符转换
+Group_symbols=$(echo ${Group}|sed -e 's/#/井号/g' -e 's/%/百分号/g')
+IPaddr_symbols=$(echo ${IPaddr}|sed -e 's/#/井号/g' -e 's/%/百分号/g')
+Device_name_symbols=$(echo ${Device_name}|sed -e 's/#/井号/g' -e 's/%/百分号/g')
+Additional_info_symbols=$(echo ${Additional_info}|sed -e 's/#/井号/g' -e 's/%/百分号/g')
+Service_name_symbols=$(echo ${Service_name}|sed -e 's/#/井号/g' -e 's/%/百分号/g')
+
+# JSON数据处理
+py_get_json_value(){
+	key="$1"
+	json="$2"
+	/usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+Key = '${key}'
+Data = ${json}
+print(Data[Key])
+EOF
+}
+
+# 消息类型
+case ${Service_type} in
+	Device)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Device_Warning'
+				msg_title='设备异常'
+				;;
+			RECOVERY)
+				msg_type='Device_Recovery'
+				msg_title='设备已恢复'
+		esac
+		;;
+	Load)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Load_Warning'
+				msg_title='负载异常'
+				;;
+			RECOVERY)
+				msg_type='Load_Recovery'
+				msg_title='负载已恢复'
+		esac
+		;;
+	App)
+		case ${Type} in
+			PROBLEM)
+				msg_type='App_Warning'
+				msg_title='程序异常'
+				;;
+			RECOVERY)
+				msg_type='App_Recovery'
+				msg_title='程序已恢复'
+		esac
+		;;
+	Database)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Database_Warning'
+				msg_title='数据库异常'
+				;;
+			RECOVERY)
+				msg_type='Database_Recovery'
+				msg_title='数据库已恢复'
+		esac
+		;;
+	Data)
+		case ${Type} in
+			PROBLEM)
+				msg_type='Data_Warning'
+				msg_title='业务异常'
+				;;
+			RECOVERY)
+				msg_type='Data_Recovery'
+				msg_title='业务已恢复'
+		esac
+esac
+
+# 设备消息模板
+device_msg(){
+	cat <<EOF
+{
+  "touser" : "${User_account}",
+  "msgtype" : "textcard",
+  "agentid" : "${Agent_id}",
+  "textcard" : {
+		"title" : "$1",
+    "description" : "<div class=\"gray\">${Time}</div>\n<div class=\"normal\">项目名称：${Group}\n设备地址：${IPaddr}\n附加信息：${Additional_info}</div>",
+		"url" : "https://${Nagios_URL}/nagios.html?title=${msg_title}&time=${Time}&group=${Group_symbols}&ip=${IPaddr_symbols}&device=${Device_name_symbols}&state=${State}&info=${Additional_info_symbols}",
+		"btntxt" : "更多信息"
+	}
+}
+EOF
+}
+
+# 负载消息模板
+load_msg(){
+	cat <<EOF
+{
+	"touser" : "${User_account}",
+  "msgtype" : "textcard",
+  "agentid" : "${Agent_id}",
+  "textcard" : {
+		"title" : "$1",
+		"description" : "<div class=\"gray\">${Time}</div>\n<div class=\"normal\">项目名称：${Group}\n设备地址：${IPaddr}\n附加信息：${Additional_info}</div>",
+		"url" : "https://${Nagios_URL}/nagios.html?title=${msg_title}&time=${Time}&group=${Group_symbols}&ip=${IPaddr_symbols}&device=${Device_name_symbols}&state=${State}&info=${Additional_info_symbols}&service=${Service_name_symbols}",
+		"btntxt" : "更多信息"
+	}
+}
+EOF
+}
+
+# 程序消息模板
+app_msg(){
+	cat <<EOF
+{
+	"touser" : "${User_account}",
+  "msgtype" : "textcard",
+  "agentid" : "${Agent_id}",
+  "textcard" : {
+		"title" : "$1",
+		"description" : "<div class=\"gray\">${Time}</div>\n<div class=\"normal\">项目名称：${Group}\n设备地址：${IPaddr}\n服务名称：${Service_name}\n附加信息：${Additional_info}</div>",
+		"url" : "https://${Nagios_URL}/nagios.html?title=${msg_title}&time=${Time}&group=${Group_symbols}&ip=${IPaddr_symbols}&device=${Device_name_symbols}&state=${State}&info=${Additional_info_symbols}&service=${Service_name_symbols}",
+		"btntxt" : "更多信息"
+	}
+}
+EOF
+}
+
+# 数据库消息模板
+database_msg(){
+	cat <<EOF
+{
+	"touser" : "${User_account}",
+  "msgtype" : "textcard",
+  "agentid" : "${Agent_id}",
+  "textcard" : {
+		"title" : "$1",
+		"description" : "<div class=\"gray\">${Time}</div>\n<div class=\"normal\">项目名称：${Group}\n服务名称：${Service_name}\n附加信息：${Additional_info}</div>",
+		"url" : "https://${Nagios_URL}/nagios.html?title=${msg_title}&time=${Time}&group=${Group_symbols}&ip=${IPaddr_symbols}&device=${Device_name_symbols}&state=${State}&info=${Additional_info_symbols}&service=${Service_name_symbols}",
+		"btntxt" : "更多信息"
+	}
+}
+EOF
+}
+
+# 数据消息模板
+data_msg(){
+	cat <<EOF
+{
+	"touser" : "${User_account}",
+  "msgtype" : "textcard",
+  "agentid" : "${Agent_id}",
+  "textcard" : {
+		"title" : "$1",
+		"description" : "<div class=\"gray\">${Time}</div>\n<div class=\"normal\">项目名称：${Group}\n服务名称：${Service_name}\n附加信息：${Additional_info}</div>",
+		"url" : "https://${Nagios_URL}/nagios.html?title=${msg_title}&time=${Time}&group=${Group_symbols}&ip=${IPaddr_symbols}&device=${Device_name_symbols}&state=${State}&info=${Additional_info_symbols}&service=${Service_name_symbols}",
+		"btntxt" : "更多信息"
+	}
+}
+EOF
+}
+
+# 消息主体
+case ${msg_type} in
+	Device_Warning|Device_Recovery)
+		msg_body=$(device_msg ${msg_title})
+		;;
+	Load_Warning|Load_Recovery)
+		msg_body=$(load_msg ${msg_title})
+		;;
+	App_Warning|App_Recovery)
+		msg_body=$(app_msg ${msg_title})
+		;;
+	Database_Warning|Database_Recovery)
+		msg_body=$(database_msg ${msg_title})
+		;;
+	Data_Warning|Data_Recovery)
+		msg_body=$(data_msg ${msg_title})
+esac
+
+# 获取Token
+access_token="$(py_get_json_value 'access_token' "$(curl -s "${Api_domain}/cgi-bin/gettoken?corpid=${Corpid}&corpsecret=${Agent_secret}")")"
+
+# 发送消息
+echo "$(date '+%Y-%m-%d %H:%M:%S') ${User_name} $(curl -s -XPOST -d "${msg_body}" "${Api_domain}/cgi-bin/message/send?access_token=${access_token}")" >> ${sent_log}
