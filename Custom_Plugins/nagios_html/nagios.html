@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+<head>
+<title>Nagios告警系统</title>
+</head>
+  <body bgcolor="white">
+	<div style="text-align: center;">
+		<img src="logo.png" style="margin: 0 auto;">
+	</div>
+	<script type="text/javascript">
+		var url = window.location.href;
+		var tempParams = url.split('?')[1].split('&');
+
+		const greenRegex = /恢复|OK|Ok|ok|UP|Up|up/;
+		const yellowRegex = /WARNING|Warning|warning/;
+		const redRegex = /异常|CRITICAL|Critical|critical|UNKNOWN|Unknown|unknown|DOWN|Down|down/;
+		
+		function ReplaceSymbols(str) {
+			return str.replace(/井号/g, "#").replace(/百分号/g, "%").replace(/换行符/g, "<br>");
+		}
+		
+		var params = {};
+		for(let i in tempParams){
+			let paramKey = ReplaceSymbols(decodeURIComponent(tempParams[i].split('=')[0]));
+			let paramValue = ReplaceSymbols(decodeURIComponent(tempParams[i].split('=')[1]));
+			params[paramKey] = paramValue;
+		}
+		
+		var Title = params["title"].big();
+		var Time = params["time"];
+		var Group = params["group"];
+		var IP = params["ip"];
+		var Device = params["device"];
+		var Service = params["service"];
+		var State = params["state"]
+		var Info = params["info"];
+		
+		if(State.match(redRegex)){
+			var Color = 'red';
+			var Icon = 'critical.png';
+			var message = 'PS：请尽快处理，以免影响业务系统运行！';
+		} else if(State.match(greenRegex)){
+			var Color = 'green';
+			var Icon = 'ok.png';
+			var message = 'PS：请尽快确认异常原因，以免出现同样的问题！';
+		} else if(State.match(yellowRegex)){
+			var Color = '#FFD306';
+			var Icon = 'warning.png';
+			var message = 'PS：请尽快处理，以免影响业务系统运行！';
+		}
+		document.write('<p style="font-family: 黑体;font-size: 20px;color: ' + Color +'"><img src="' + Icon + '" height=20px width=20px /><b>'+ Title + '</b></p>');
+		document.write('<p style="font-style: italic;color: gray">' + Time + '</p>');
+		document.write('<hr/>')
+		document.write('<p><span style="font-size: 20px;font-style: normal">项目名称：</span><span style="font-style: italic;font-size: 18px;color: blue;font-family: 楷体">' + Group + '</span></p>');
+		document.write('<p><span style="font-size: 20px;font-style: normal">设备名称：</span><span style="font-style: italic;font-size: 18px;color: blue;font-family: 楷体">' + Device + '</span></p>');
+		document.write('<p><span style="font-size: 20px;font-style: normal">设备地址：</span><span style="font-style: italic;font-size: 18px;color: blue;font-family: 楷体">' + IP + '</span></p>');
+		if(params["service"]){
+			document.write('<p><span style="font-size: 20px;font-style: normal">服务名称：</span><span style="font-style: italic;font-size: 18px;color: blue;font-family: 楷体">' + Service + '</span></p>');
+		}
+		document.write('<p><span style="font-size: 20px;font-style: normal">当前状态：</span><span style="font-style: italic;font-size: 18px;font-family: 楷体;color: ' + Color +'">' + State + '</span></p>');
+		document.write('<p style="font-size: 20px;font-style: normal">附加信息：</p><p style="font-size: 18px;font-style: italic;font-family: 楷体;color: ' + Color +'">' + Info + '</p>');
+		document.write('<hr/>')
+		document.write('<p style="font-family: 黑体;font-style: italic;font-size: 14px;color: red"><b>'+ message + '</b></p>');
+	</script>
+  </body>
+</html>
