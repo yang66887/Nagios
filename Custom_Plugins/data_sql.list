@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# 语句示例
+SQL_sqlname1="select value from TableName where condition1='value1';"
