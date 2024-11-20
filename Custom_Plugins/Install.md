@@ -2,9 +2,15 @@
 
 ### 安装
 #### Nagios Plugins、MySQL Client、check_ncpa与InfluxDB集成脚本
->`下载`
+>`下载集成脚本`
 ```shell
 curl -o /usr/local/nagios/libexec/check_performance https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/check_performance
+```
+>`下载SQL语句记录文件`
+>`用于监控MySQL定制化数据`
+>`语句名必须以 SQL_ 开头`
+```shell
+curl -o /usr/local/nagios/etc/data_sql.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/data_sql.list'
 ```
 >`修改权限`
 ```shell
