@@ -19,6 +19,8 @@
 
 7、[Install Custom Plugins](./Custom_Plugins/Install.md)
 
+8、[Nagios Configure](./Nagios_etc/Configure.md)
+
 ## For NCPA Server
 
 1、[Install NCPA](./NCPA/Install.md)
