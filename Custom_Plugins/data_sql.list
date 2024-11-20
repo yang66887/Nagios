@@ -1,4 +1,7 @@
 #!/bin/bash
 
-# 语句示例
-SQL_sqlname1="select value from TableName where condition1='value1';"
+# 语句示例1
+SQL_test1="select value from TableName where condition1='value1';"
+
+# 语句示例2
+SQL_test2="select value from TableName where condition2='value2';"
