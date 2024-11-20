@@ -51,7 +51,7 @@ curl -o check_ncpa.tar.gz 'https://assets.nagios.com/downloads/ncpa/check_ncpa.t
 >`解压并拷贝到Nagios插件目录`
 ```shell
 tar xf check_ncpa.tar.gz
-mv check_ncpa.py /usr/local/nagios/libexec
+mv check_ncpa.py /usr/local/nagios/libexec/check_ncpa
 ```
 >`修改插件权限`
 ```shell
