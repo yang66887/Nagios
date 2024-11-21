@@ -25,6 +25,8 @@
 
 1、[Install NCPA](./NCPA/Install.md)
 
+2、[Install Nagios Plugins](./Nagios_Plugins/Install.md)
+
 
 ## Grafana效果示例
 ![image](./IMG/Grafana_1.png)
