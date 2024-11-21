@@ -64,6 +64,16 @@ sed -i 's/mytoken/生成的Token值/g' /usr/local/ncpa/etc/ncpa.cfg
 ```shell
 systemctl restart ncpa
 ```
+>`下载自定义插件`
+```shell
+curl -o /usr/local/ncpa/plugins/systeminfo 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/systeminfo'
+curl -o /usr/local/ncpa/plugins/nagios_plugins 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/nagios_plugins'
+```
+>`添加执行权限`
+```shell
+chmod 755 /usr/local/ncpa/plugins/systeminfo
+chmod 755 /usr/local/ncpa/plugins/nagios_plugins
+```
 
 ## For Windows
 
@@ -77,3 +87,13 @@ https://assets.nagios.com/downloads/ncpa3/ncpa-latest.exe
 >`双击开始安装`
 >`输入生成的Token值`
 >`其余选项默认`
+
+### 添加自定义插件
+>`下载地址`
+```shell
+https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/systeminfo.bat
+```
+>`自定义插件路径`
+```shell
+C:\Program Files\Nagios\NCPA\plugins\systeminfo.bat
+```
