@@ -1,6 +1,63 @@
 # Install Custom plugins
 
 ### 安装
+#### MySQL Client
+>`官网下载页面`
+```shell
+https://dev.mysql.com/downloads/mysql/
+```
+>`For EL7`
+>`下载rpm包`
+>`安装`
+```shell
+curl -o mysql-community-client-8.0.40-1.el7.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client-8.0.40-1.el7.x86_64.rpm'
+curl -o mysql-community-client-plugins-8.0.40-1.el7.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client-plugins-8.0.40-1.el7.x86_64.rpm'
+curl -o mysql-community-common-8.0.40-1.el7.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-common-8.0.40-1.el7.x86_64.rpm'
+curl -o mysql-community-libs-8.0.40-1.el7.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-libs-8.0.40-1.el7.x86_64.rpm'
+curl -o mysql-community-libs-compat-8.0.40-1.el7.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-libs-compat-8.0.40-1.el7.x86_64.rpm'
+```
+```shell
+rpm -Uvh \
+mysql-community-client-8.0.40-1.el7.x86_64.rpm \
+mysql-community-client-plugins-8.0.40-1.el7.x86_64.rpm \
+mysql-community-libs-8.0.40-1.el7.x86_64.rpm \
+mysql-community-libs-compat-8.0.40-1.el7.x86_64.rpm \
+mysql-community-common-8.0.40-1.el7.x86_64.rpm
+```
+>`For EL8`
+>`下载rpm包`
+>`安装`
+```shell
+curl -o mysql-community-client-8.0.40-1.el8.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client-8.0.40-1.el8.x86_64.rpm'
+curl -o mysql-community-client-plugins-8.0.40-1.el8.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client-plugins-8.0.40-1.el8.x86_64.rpm'
+curl -o mysql-community-common-8.0.40-1.el8.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-common-8.0.40-1.el8.x86_64.rpm'
+curl -o mysql-community-libs-8.0.40-1.el8.x86_64.rpm 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-libs-8.0.40-1.el8.x86_64.rpm'
+```
+```shell
+rpm -ivh \
+mysql-community-client-8.0.40-1.el8.x86_64.rpm \
+mysql-community-client-plugins-8.0.40-1.el8.x86_64.rpm \
+mysql-community-libs-8.0.40-1.el8.x86_64.rpm \
+mysql-community-common-8.0.40-1.el8.x86_64.rpm
+```
+>`For Ubuntu 22`
+>`下载deb包`
+>`安装`
+```shell
+curl -o mysql-community-client_8.0.40-1ubuntu22.04_amd64.deb 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client_8.0.40-1ubuntu22.04_amd64.deb'
+curl -o mysql-community-client-core_8.0.40-1ubuntu22.04_amd64.deb 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client-core_8.0.40-1ubuntu22.04_amd64.deb'
+curl -o mysql-community-client-plugins_8.0.40-1ubuntu22.04_amd64.deb 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-community-client-plugins_8.0.40-1ubuntu22.04_amd64.deb'
+curl -o mysql-common_8.0.40-1ubuntu22.04_amd64.deb 'https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-common_8.0.40-1ubuntu22.04_amd64.deb'
+```
+```shell
+dpkg -i \
+mysql-community-client_8.0.40-1ubuntu22.04_amd64.deb \
+mysql-community-client-core_8.0.40-1ubuntu22.04_amd64.deb \
+mysql-community-client-plugins_8.0.40-1ubuntu22.04_amd64.deb \
+mysql-common_8.0.40-1ubuntu22.04_amd64.deb
+```
+
+
 #### Nagios Plugins、MySQL Client、check_ncpa与InfluxDB集成脚本
 >`下载集成脚本`
 ```shell
