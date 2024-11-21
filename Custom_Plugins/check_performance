@@ -31,7 +31,7 @@ Influx_URL="${4}"
 Influx_Auth="${5}"
 
 # 校验传参
-case $1 in
+case ${Node} in
   website)
     [ $# -eq 9 ] || error_msg
     HTTP_Auth="-a${6}"
