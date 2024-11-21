@@ -60,10 +60,6 @@ dpkg -i ncpa_3.1.1-1_amd64.deb
 ```shell
 sed -i 's/mytoken/生成的Token值/g' /usr/local/ncpa/etc/ncpa.cfg
 ```
->`重启NCPA服务`
-```shell
-systemctl restart ncpa
-```
 >`下载自定义插件`
 ```shell
 curl -o /usr/local/ncpa/plugins/systeminfo 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/systeminfo'
@@ -73,6 +69,10 @@ curl -o /usr/local/ncpa/plugins/nagios_plugins 'https://raw.githubusercontent.co
 ```shell
 chmod 755 /usr/local/ncpa/plugins/systeminfo
 chmod 755 /usr/local/ncpa/plugins/nagios_plugins
+```
+>`重启NCPA服务`
+```shell
+systemctl restart ncpa
 ```
 
 ## For Windows
