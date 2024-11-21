@@ -1,0 +1,17 @@
+#!/bin/bash
+
+case $1 in
+	system)
+		if [ -s /etc/redhat-release ];then
+			cat /etc/redhat-release
+		else
+			source /etc/os-release &>/dev/null
+			echo ${PRETTY_NAME}
+		fi
+		;;
+	kernel)
+		uname -r
+		;;
+	cpu)
+		grep processor /proc/cpuinfo|wc -l
+esac
