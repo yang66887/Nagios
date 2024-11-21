@@ -1,9 +1,0 @@
-#!/bin/bash
-
-plugins_dir='/usr/local/nagios/libexec'
-
-plugin="$1"
-
-args="$(echo $2|sed -e 's/_/ /g' -e 's/|/\//g')"
-
-${plugins_dir}/${plugin} ${args}
