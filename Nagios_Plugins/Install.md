@@ -25,6 +25,10 @@ apt install make gcc libssl-dev
 ```
 
 ### 编译安装
+>`创建Nagios账号`
+```shell
+useradd -M -s /sbin/nologin nagios
+```
 >`解压源码包`
 ```shell
 tar xf nagios-plugins-2.4.12.tar.gz
