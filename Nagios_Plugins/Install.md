@@ -5,23 +5,23 @@
 https://nagios-plugins.org/
 ```
 
-### 下载源码包
-```shell
-curl -o nagios-plugins-2.4.12.tar.gz https://github.com/nagios-plugins/nagios-plugins/releases/download/release-2.4.12/nagios-plugins-2.4.12.tar.gz
-```
-
 ### 安装依赖包
 #### ***For EL7***
 ```shell
-yum install gcc openssl-devel perl
+yum install wget gcc openssl-devel perl
 ```
 #### ***For EL8***
 ```shell
-yum install tar make gcc openssl-devel
+yum install wget tar make gcc openssl-devel
 ```
 #### ***For Ubuntu 22***
 ```shell
-apt install make gcc libssl-dev
+apt install wget make gcc libssl-dev
+```
+
+### 下载源码包
+```shell
+wget https://github.com/nagios-plugins/nagios-plugins/releases/download/release-2.4.12/nagios-plugins-2.4.12.tar.gz
 ```
 
 ### 编译安装
