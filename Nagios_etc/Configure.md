@@ -48,7 +48,7 @@ mkdir /usr/local/nagios/etc/monitor
 ```
 >`下载配置文件模板`
 ```shell
-curl -o /usr/local/nagios/etc/monitor/command.cfg 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Nagios_etc/monitor/commands.cfg'
+curl -o /usr/local/nagios/etc/monitor/commands.cfg 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Nagios_etc/monitor/commands.cfg'
 curl -o /usr/local/nagios/etc/monitor/contacts.cfg 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Nagios_etc/monitor/contacts.cfg'
 curl -o /usr/local/nagios/etc/monitor/localhost.cfg 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Nagios_etc/monitor/localhost.cfg'
 curl -o /usr/local/nagios/etc/monitor/templates.cfg 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Nagios_etc/monitor/templates.cfg'
