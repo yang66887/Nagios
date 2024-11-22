@@ -70,3 +70,7 @@ vi /usr/local/nagios/etc/monitor/timeperiods.cfg
 ```shell
 vi /usr/local/nagios/etc/monitor/localhost.cfg
 ```
+>`重启Nagios服务`
+```shell
+systemctl restart nagios
+```
