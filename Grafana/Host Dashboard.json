@@ -53,6 +53,234 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "rgb(31, 120, 193)",
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "响应时间"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-green",
+                      "value": null
+                    },
+                    {
+                      "color": "dark-red",
+                      "value": 2000
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Host 状态"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Up"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Down"
+                      },
+                      "to": 255
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 32,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": false
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "alias": "Host 状态",
+          "datasource": {
+            "type": "influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "Host_Status",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT last(\"memory_max\") - last(\"memory_used\") FROM \"memory_usage\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "k_Host_Status"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "Host::tag",
+              "operator": "=~",
+              "value": "/^$Host$/"
+            }
+          ]
+        },
+        {
+          "alias": "响应时间",
+          "datasource": {
+            "type": "influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "Host_Status",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT last(\"memory_max\") - last(\"memory_used\") FROM \"memory_usage\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "m_Response_Time"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "Host::tag",
+              "operator": "=~",
+              "value": "/^$Host$/"
+            }
+          ]
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "fixedColor": "dark-blue",
             "mode": "fixed"
           },
@@ -73,7 +301,7 @@
       "gridPos": {
         "h": 2,
         "w": 5,
-        "x": 0,
+        "x": 4,
         "y": 1
       },
       "id": 109,
@@ -173,7 +401,7 @@
       "gridPos": {
         "h": 2,
         "w": 5,
-        "x": 5,
+        "x": 9,
         "y": 1
       },
       "id": 108,
@@ -272,15 +500,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "dark-yellow",
                 "value": 51200
               },
               {
-                "color": "red",
+                "color": "dark-red",
                 "value": 102400
               }
             ]
@@ -292,7 +520,7 @@
       "gridPos": {
         "h": 2,
         "w": 2,
-        "x": 10,
+        "x": 14,
         "y": 1
       },
       "id": 107,
@@ -399,15 +627,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "dark-yellow",
                 "value": 51200
               },
               {
-                "color": "red",
+                "color": "dark-red",
                 "value": 102400
               }
             ]
@@ -419,7 +647,7 @@
       "gridPos": {
         "h": 2,
         "w": 2,
-        "x": 12,
+        "x": 16,
         "y": 1
       },
       "id": 106,
@@ -528,15 +756,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "dark-yellow",
                 "value": 5
               },
               {
-                "color": "red",
+                "color": "dark-red",
                 "value": 10
               }
             ]
@@ -560,15 +788,15 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
+                      "color": "dark-green",
                       "value": null
                     },
                     {
-                      "color": "yellow",
+                      "color": "dark-yellow",
                       "value": 80
                     },
                     {
-                      "color": "red",
+                      "color": "dark-red",
                       "value": 90
                     }
                   ]
@@ -586,8 +814,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 10,
-        "x": 14,
+        "w": 6,
+        "x": 18,
         "y": 1
       },
       "id": 112,
@@ -768,7 +996,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 0,
+        "x": 4,
         "y": 3
       },
       "id": 27,
@@ -882,7 +1110,7 @@
       "gridPos": {
         "h": 2,
         "w": 2,
-        "x": 3,
+        "x": 7,
         "y": 3
       },
       "id": 80,
@@ -999,7 +1227,7 @@
       "gridPos": {
         "h": 4,
         "w": 9,
-        "x": 5,
+        "x": 9,
         "y": 3
       },
       "id": 121,
@@ -1382,16 +1610,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
-              },
-              {
-                "color": "light-yellow",
-                "value": 6407232
-              },
-              {
-                "color": "light-red",
-                "value": 7208136
               }
             ]
           },
@@ -1401,8 +1621,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
-        "x": 14,
+        "w": 2,
+        "x": 18,
         "y": 4
       },
       "id": 29,
@@ -1486,31 +1706,13 @@
             "mode": "thresholds"
           },
           "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "dark-green",
                 "value": null
-              },
-              {
-                "color": "light-yellow",
-                "value": 80904
-              },
-              {
-                "color": "green",
-                "value": 1601808
               }
             ]
           },
@@ -1520,11 +1722,11 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
-        "x": 17,
+        "w": 2,
+        "x": 20,
         "y": 4
       },
-      "id": 32,
+      "id": 138,
       "maxDataPoints": 100,
       "options": {
         "colorMode": "background",
@@ -1567,8 +1769,6 @@
           "measurement": "Memory_Usage",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"memory_max\") - last(\"memory_used\") FROM \"memory_usage\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1611,11 +1811,11 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "dark-red",
                 "value": 10000
               }
             ]
@@ -1626,8 +1826,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
-        "x": 20,
+        "w": 2,
+        "x": 22,
         "y": 4
       },
       "id": 30,
@@ -1739,7 +1939,7 @@
       "gridPos": {
         "h": 2,
         "w": 2,
-        "x": 3,
+        "x": 7,
         "y": 5
       },
       "id": 105,
@@ -6932,7 +7132,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Nginx5",
           "value": "Nginx5"
         },
@@ -6984,7 +7184,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "/",
           "value": "/"
         },
@@ -7010,7 +7210,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "业务数据测试1",
           "value": "业务数据测试1"
         },
@@ -7068,6 +7268,6 @@
   "timezone": "browser",
   "title": "Host Dashboard",
   "uid": "Iqw--kMWz",
-  "version": 91,
+  "version": 95,
   "weekStart": ""
 }
