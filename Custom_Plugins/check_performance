@@ -37,11 +37,12 @@ case ${Node} in
     Plugin="${6}"
     ;;
   website)
-    [ $# -eq 9 ] || error_msg
-    HTTP_Auth="-a${6}"
-    HTTP_Url="-u${7}"
-    HTTP_SSL=${8}
-    HTTP_Name="${9}"
+    [ $# -eq 10 ] || error_msg
+    HTTP_Proto="${6}"
+    HTTP_Auth="-a${7}"
+    HTTP_Url="-u${8}"
+    HTTP_SSL=${9}
+    HTTP_Name="${10}"
     ;;
   mysql_status)
     [ $# -eq 8 ] || error_msg
@@ -210,15 +211,16 @@ check_host(){
       echo error
   esac
 
-  
   # 将检查结果写入 Influxdb
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Host_Status,\
 Host=${Host},\
-i_Host_Status=${HOST_status} \
-k_Packet_Loss=${Packet_loss},\
-k_Response_Time=${Response_time}" \
+i_Time_Unit=ms,\
+j_loss_Unit=% \
+k_Host_Status=${HOST_status},\
+l_Packet_Loss=${Packet_loss},\
+m_Response_Time=${Response_time}" \
 &>/dev/null
 
   # 输出检查结果
@@ -444,32 +446,49 @@ check_http(){
     HTTP_SSL=''
   fi
 
-  # 执行检查并存储检查结果
-  result=$(${plugins}/check_http -H${Host} -p${Port} ${HTTP_Auth} ${HTTP_Url} ${HTTP_SSL})
+  case ${HTTP_Proto} in
+    http)
+      # 执行检查并存储检查结果
+      result=$(${plugins}/check_http -H${Host} -p${Port} ${HTTP_Auth} ${HTTP_Url} ${HTTP_SSL})
+      # 存储检查返回值
+      return_code=$?
+      if [ $(echo ${result}|grep ^HTTP|wc -l) -eq 1 ];then
+        # 分离并存储检查结果中的部分数值
+        Http_Status="$(echo ${result}|awk '{print $2}'|sed 's/://g')"
+        Http_Code="$(echo ${result}|awk '{print $4}')"
+        Response_Time="$(echo ${result}|sed 's/.*|time=\([0-9.]*\)s.*/\1/g')"
+      fi
+      ;;
+    tcp)
+      # 执行检查并存储检查结果
+      result=$(${plugins}/check_tcp -H${Host} -p${Port})
+      # 存储检查返回值
+      return_code=$?
+      if [ ${return_code} -eq 0 ];then
+        Http_Status='OK'
+        Http_Code=200
+        Response_Time="$(echo ${result}|sed 's/.*time=\(.*\)s.*/\1/g')"
+      else
+        Http_Status='CRITICAL'
+        Http_Code=500
+        Response_Time=5
+      fi
+  esac
 
-  # 存储检查返回值
-  return_code=$?
-
-  if [ $(echo ${result}|grep ^HTTP|wc -l) -eq 1 ];then
-    # 分离并存储检查结果中的部分数值
-    Http_Status="$(echo ${result}|awk '{print $2}'|sed 's/://g')"
-    Http_Code="$(echo ${result}|awk '{print $4}')"
-    Response_Time="$(echo ${result}|sed 's/.*|time=\([0-9.]*\)s.*/\1/g')"
-
-    if [ $(echo ${Http_Code}|grep ^[0-9]*$ &>/dev/null;echo $?) -eq 0 ];then
-      # 将检查结果写入 Influxdb
-      curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
-      --data-binary "\
+  if [ $(py_isdigit ${Http_Code}) -eq 0 ];then
+    # 将检查结果写入 Influxdb
+    curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+    --data-binary "\
 Web_Status,\
 Host=${Host},\
-j_Web_Port=${Port},\
 i_Web_Name=${HTTP_Name},\
-n_Response_Time_Unit=s \
-k_Web_Status=\"${Http_Status}\",\
-l_Http_Code=${Http_Code},\
-m_Response_Time=${Response_Time}" \
+j_Web_Port=${Port},\
+k_Protocol=${HTTP_Proto},\
+o_Response_Time_Unit=s \
+l_Web_Status=\"${Http_Status}\",\
+m_Http_Code=${Http_Code},\
+n_Response_Time=${Response_Time}" \
 &>/dev/null
-    fi
   fi
 
   # 输出检查结果
