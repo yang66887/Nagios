@@ -14,6 +14,8 @@ sed -i 's/^\(#cfg_dir=.*servers\)/cfg_dir=\/usr\/local\/nagios\/etc\/monitor\n\1
 >`以下账号密码与IP地址等信息仅供参考，请自行修改`
 
 >`MySQL用户名与密码`
+>`grant select on *.*`
+>`grant REPLICATION CLIENT on *.*`
 ```shell
 cat >>/usr/local/nagios/etc/resource.cfg <<EOF
 
