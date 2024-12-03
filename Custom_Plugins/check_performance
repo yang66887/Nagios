@@ -51,13 +51,12 @@ case ${Node} in
     MYSQL_Mode="${8}"
     ;;
   mysql_health)
-    [ $# -eq 11 ] || error_msg
+    [ $# -eq 10 ] || error_msg
     MYSQL_User="${6}"
     MYSQL_Pwd="${7}"
-    MYSQL_Mode="${8}"
-    MYSQL_Health="${9}"
-    Warning="${10}"
-    Critical="${11}"
+    MYSQL_Health="${8}"
+    Warning="${9}"
+    Critical="${10}"
     ;;
   mysql_data)
     [ $# -eq 12 ] ||error_msg
