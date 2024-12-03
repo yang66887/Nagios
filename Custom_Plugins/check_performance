@@ -173,7 +173,7 @@ digital_compare(){
 influx_mysql_status(){
   py_json_value $(curl -s -u "${Influx_Auth}" -G "http://${Influx_URL}/query?pretty=false"\
   --data-urlencode "db=nagios_perfdata"\
-  --data-urlencode "q=select last($1) from mysql_status where (host='${Host}')")
+  --data-urlencode "q=select last($1) from MySQL_Status where (Host='${Host}')")
   return $?
 }
 
