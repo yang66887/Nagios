@@ -517,6 +517,7 @@ innodb_buffer_pool_reads|\
 innodb_buffer_pool_read_requests|\
 bytes_sent|\
 bytes_received|\
+table_locks_|\
 innodb_rows_';" 2>/dev/null)"
 
   # 记录返回值
@@ -576,6 +577,10 @@ innodb_rows_';" 2>/dev/null)"
     Last_Innodb_rows_deleted=0
     Last_Innodb_rows_updated=0
   fi
+
+  # 锁表率
+  Table_locks_percent=$(echo ${Table_locks_waited} ${Table_locks_waited} ${Table_locks_immediate}|\
+  awk '{printf "%0.2f\n",$1/($2+$3)*100}')
 
   # 每秒查询数
   QPS=$(echo ${Questions} ${Last_Questions} ${Uptime} ${Last_Uptime}|\
@@ -641,6 +646,7 @@ Slow_queries_per_sec=${Slow_queries_per_sec},\
 Threads_connected=${Threads_connected},\
 Threads_cached=${Threads_cached},\
 Threads_created=${Threads_created},\
+Table_locks_percent=${Table_locks_percent},\
 Bytes_received=${Bytes_received},\
 Bytes_received_per_sec=${Bytes_received_per_sec},\
 Bytes_sent=${Bytes_sent},\
