@@ -723,7 +723,7 @@ check_mysql_health(){
         if [ "X${result}" == "XYes" ];then
           return_code=0
         else
-          return_code=1
+          return_code=2
         fi
         comment="从库${MYSQL_Health}状态：${result}"
     esac
