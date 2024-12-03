@@ -690,6 +690,13 @@ check_mysql_health(){
 
   if [ ${return_code} -eq 0 ];then
     case ${MYSQL_Health} in
+      # 当前锁表率
+      Table_locks_percent)
+        digital_compare ${result} ${Warning} ${Critical}
+        # 存储返回值
+        return_code=$?
+        comment="当前锁表率：${result}%"
+        ;;
       # 已用连接数
       Threads_connected)
         digital_compare ${result} ${Warning} ${Critical}
