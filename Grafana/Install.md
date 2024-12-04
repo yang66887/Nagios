@@ -46,11 +46,11 @@ systemctl enable --now grafana-server
 #### ***For Ubuntu 22***
 >`下载安装包`
 ```shell
-wget https://dl.grafana.com/enterprise/release/grafana-enterprise_11.3.0+security_01_amd64.deb
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise_11.3.0+security~01_amd64.deb
 ```
 >`安装`
 ```shell
-dpkg -i grafana-enterprise_11.3.0+security~01_amd64.deb
+dpkg -i grafana-enterprise_11.3.0+security_01_amd64.deb
 ```
 >`启动`
 ```shell
