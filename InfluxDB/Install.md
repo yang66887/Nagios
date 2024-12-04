@@ -89,7 +89,7 @@ systemctl restart influxdb
 ```
 >`使用管理员账号登录InfluxDB`
 ```shell
-influx -precision rfc3339 -username UserName -password Password@123
+influx -precision rfc3339 -username UserName -password 'Password@123'
 ```
 >`创建Nagios监控数据库`
 >`数据留存策略：180天`
