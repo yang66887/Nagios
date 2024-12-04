@@ -26,21 +26,21 @@ apt install wget logrotate
 #### ***For EL7 & EL8***
 >`下载`
 ```shell
-wget https://download.influxdata.com/influxdb/releases/influxdb-1.11.7.x86_64.rpm
+wget https://download.influxdata.com/influxdb/releases/influxdb-1.11.8.x86_64.rpm
 ```
 >`安装`
 ```shell
-rpm -ivh influxdb-1.11.7.x86_64.rpm
+rpm -ivh influxdb-1.11.8.x86_64.rpm
 ```
 
 #### ***For Ubuntu 22***
 >`下载`
 ```shell
-wget https://download.influxdata.com/influxdb/releases/influxdb-1.11.7-amd64.deb
+wget https://download.influxdata.com/influxdb/releases/influxdb-1.11.8-amd64.deb
 ```
 >`安装`
 ```shell
-dpkg -i influxdb-1.11.7-amd64.deb
+dpkg -i influxdb-1.11.8-amd64.deb
 ```
 >`删除InfluxDB默认数据存储目录`
 ```shell
