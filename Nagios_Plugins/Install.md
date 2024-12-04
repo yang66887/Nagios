@@ -47,7 +47,7 @@ cd nagios-plugins-2.4.12
 && make install
 ```
 
-### 安装NCPA检查插件
+### 安装NCPA检查插件 - For Nagios Server
 >`下载插件压缩包`
 ```shell
 curl -o check_ncpa.tar.gz 'https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz'
