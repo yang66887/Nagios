@@ -8,7 +8,7 @@ https://www.php.net/downloads
 
 ### 下载源码包
 ```shell
-curl -o php-8.3.13.tar.gz https://www.php.net/distributions/php-8.3.13.tar.gz
+curl -o php-8.3.14.tar.gz https://www.php.net/distributions/php-8.3.14.tar.gz
 ```
 
 ### 安装依赖包
@@ -28,11 +28,11 @@ apt install make gcc libxml2-dev pkg-config libsqlite3-dev
 ### 编译安装
 >`解压源码包`
 ```shell
-tar xf php-8.3.13.tar.gz
+tar xf php-8.3.14.tar.gz
 ```
 >`进入安装目录`
 ```shell
-cd php-8.3.13
+cd php-8.3.14
 ```
 >`编译并安装`
 ```shell
