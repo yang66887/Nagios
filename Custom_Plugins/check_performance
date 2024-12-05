@@ -539,7 +539,7 @@ innodb_rows_';" 2>/dev/null)"
 
   # 检查并存储从库同步状态，主库：MYSQL_Mode = 0，从库：MYSQL_Mode = 1
   if [ ${MYSQL_Mode} -eq 1 ];then
-    Slave_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
+    Slave_Status="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
     show slave status\G;" 2>/dev/null|\
     grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*'|\
     sed -e 's/: /=/g' -e 's/=\([A-Za-z]*$\)/="\1"/g'|\
