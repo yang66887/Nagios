@@ -96,7 +96,7 @@ esac
 
 # python求和
 py_sum(){
-  Arr="($1)"
+  Arr="(0,$1)"
   /usr/bin/python <<EOF
 # -*- coding: UTF-8 -*-
 Arr = ${Arr}
@@ -214,7 +214,7 @@ check_host(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Host_Status,\
-Host=${Host},\
+Host=${Client},\
 i_Time_Unit=ms,\
 j_loss_Unit=% \
 k_Host_Status=${HOST_status},\
@@ -245,7 +245,7 @@ check_cpu(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Cpu_Usage,\
-Host=${Host},\
+Host=${Client},\
 i_Cpu_Status=${CPU_status},\
 k_Cpu_Unit=% \
 j_Cpu_Percent=${CPU_percent}" \
@@ -277,7 +277,7 @@ check_mem(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Memory_Usage,\
-Host=${Host},\
+Host=${Client},\
 i_Memory_Status=${Memory_status},\
 o_Memory_Percent_unit=%,\
 m_Memory_Unit=${Unit}B \
@@ -316,7 +316,7 @@ check_disk(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Disk_Usage,\
-Host=${Host},\
+Host=${Client},\
 j_Disk_Status=${Disk_status},\
 i_Partition_Name=${NCPA_Path},\
 p_Disk_Percent_Unit=%,\
@@ -354,7 +354,7 @@ check_IO(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Disk_IO,\
-Host=${Host},\
+Host=${Client},\
 j_IO_Status=${IO_status},\
 i_Drive_Name=${drive},\
 k_IO_Type=${IO_type},\
@@ -386,7 +386,7 @@ check_interface(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Interface_Usage,\
-Host=${Host},\
+Host=${Client},\
 i_Traffic_Status=${Traffic_status},\
 j_Traffic_Type=${Traffic_type},\
 l_Traffic_Unit=${Unit}B/s \
@@ -421,7 +421,7 @@ check_load(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Cpu_Load,\
-Host=${Host},\
+Host=${Client},\
 i_Status=${Load_Status} \
 j_Load_1=${Load_1},\
 k_Load_5=${Load_5},\
@@ -479,7 +479,7 @@ check_http(){
     curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
     --data-binary "\
 Web_Status,\
-Host=${Host},\
+Host=${Client},\
 i_Web_Name=${HTTP_Name},\
 j_Web_Port=${Port},\
 k_Protocol=${HTTP_Proto},\
@@ -633,7 +633,7 @@ innodb_rows_';" 2>/dev/null)"
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 MySQL_Status,\
-Host=${Host},\
+Host=${Client},\
 MySQL_Port=${Port},\
 MySQL_Mode=${MYSQL_Mode},\
 MySQL_Status=${return_code} \
@@ -770,7 +770,7 @@ check_mysql_data(){
       curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
       --data-binary "\
 Business_Data,\
-Host=${Host},\
+Host=${Client},\
 i_Data_Name=${MYSQL_Data},\
 j_Data_Status=${return_code},\
 k_Data_Comment=${MYSQL_Comment},\
@@ -848,7 +848,7 @@ system_info(){
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 System_Info,\
-Host=${Host},\
+Host=${Client},\
 i_System_Status=${System_status},\
 m_Uptime_Unit=s \
 j_OS_Version=\"$(echo ${OS_Version}|sed 's/ /_/g')\",\
