@@ -798,12 +798,11 @@ m_Data_Value=${result}" \
 system_info(){
   case ${NCPA_Path} in
     Windows)
-      # 操作系统版本
-      OS_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo.bat/system"|sed 's/^OS Name: *\(M.*\)$/\1/g')
-      # 内核版本
-      Kernel_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo.bat/kernel"|sed 's/^OS Version: *\(.*\)$/\1/g')
+      # 操作系统以及内核版本
+      OS_Info=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+      -M "plugins/systeminfo.bat/os")
+      OS_Version=$(echo ${OS_Info}|sed 's/^OS Name: *\(Microsoft.*\) *OS Version:.*$/\1/g')
+      Kernel_Version=$(echo ${OS_Info}|sed 's/^.*OS Version: *\(.*\)$/\1/g')
       # CPU核心数
       Cores_Count=$(py_sum $(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
       -M "plugins/systeminfo.bat/cpu"|grep -v ^$|tr '\n' ','|sed -e 's/ //g' -e 's/,$//g'))
