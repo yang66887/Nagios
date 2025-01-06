@@ -8,7 +8,7 @@ https://www.nagios.org/downloads/nagios-core/
 
 ### 下载源码包
 ```shell
-curl -o nagios-4.5.8.tar.gz https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.5.8.tar.gz
+curl -o nagios-4.5.9.tar.gz https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.5.9.tar.gz
 ```
 
 ### 安装依赖包
@@ -32,11 +32,11 @@ useradd -M -s /sbin/nologin nagios
 ```
 >`解压源码包`
 ```shell
-tar xf nagios-4.5.8.tar.gz
+tar xf nagios-4.5.9.tar.gz
 ```
 >`进入安装目录`
 ```shell
-cd nagios-4.5.8
+cd nagios-4.5.9
 ```
 >`编译并安装`
 ```shell
