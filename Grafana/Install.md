@@ -19,12 +19,12 @@ apt install wget libfontconfig1 musl
 #### ***For EL7***
 >`下载安装包`
 ```shell
-wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.3.0+security~01-1.x86_64.rpm
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.4.0-1.x86_64.rpm
 ```
 >`安装`
 >`el7 rpm命令版本过低，添加--nodeps跳过rpm版本检查`
 ```shell
-rpm -ivh grafana-enterprise-11.3.0+security~01-1.x86_64.rpm --nodeps
+rpm -ivh grafana-enterprise-11.4.0-1.x86_64.rpm --nodeps
 ```
 >`启动`
 ```shell
@@ -33,11 +33,11 @@ systemctl enable --now grafana-server
 #### ***For EL8***
 >`下载安装包`
 ```shell
-wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.3.0+security~01-1.x86_64.rpm
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.4.0-1.x86_64.rpm
 ```
 >`安装`
 ```shell
-rpm -ivh grafana-enterprise-11.3.0+security~01-1.x86_64.rpm
+rpm -ivh grafana-enterprise-11.4.0-1.x86_64.rpm
 ```
 >`启动`
 ```shell
@@ -46,11 +46,11 @@ systemctl enable --now grafana-server
 #### ***For Ubuntu 22***
 >`下载安装包`
 ```shell
-wget https://dl.grafana.com/enterprise/release/grafana-enterprise_11.3.0+security~01_amd64.deb
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise_11.4.0_amd64.deb
 ```
 >`安装`
 ```shell
-dpkg -i grafana-enterprise_11.3.0+security_01_amd64.deb
+dpkg -i grafana-enterprise_11.4.0_amd64.deb
 ```
 >`启动`
 ```shell
