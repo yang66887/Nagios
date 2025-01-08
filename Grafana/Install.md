@@ -22,7 +22,7 @@ apt install wget libfontconfig1 musl
 wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.4.0-1.x86_64.rpm
 ```
 >`安装`
->`el7 rpm命令版本过低，添加--nodeps跳过rpm版本检查`
+>`EL7可能提示rpm命令版本过低，添加--nodeps跳过rpm版本检查`
 ```shell
 rpm -ivh grafana-enterprise-11.4.0-1.x86_64.rpm --nodeps
 ```
