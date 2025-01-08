@@ -7,6 +7,7 @@ https://www.php.net/downloads
 ```
 
 ### 下载源码包
+>`EL7请下载8.3版本`
 ```shell
 curl -o php-8.4.2.tar.gz https://www.php.net/distributions/php-8.4.2.tar.gz
 ```
