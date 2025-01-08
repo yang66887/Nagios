@@ -53,7 +53,7 @@ cd nagios-4.5.9
 >`-salt 盐值`
 >`-apr1 密码`
 ```shell
-echo "nagios:$(openssl passwd -salt 'xxxxXXXX' -apr1 Password@abc123)" >/usr/local/nagios/etc/auth.users
+echo "nagios:$(openssl passwd -salt 'xxxxXXXX' -apr1 'Password@abc123')" >/usr/local/nagios/etc/auth.users
 ```
 >`修改Nagios管理员账号`
 ```shell
