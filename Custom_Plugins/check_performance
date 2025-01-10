@@ -26,63 +26,64 @@ error_msg(){
 # 接收传参
 Node="${1}"
 Host="${2}"
-Port="${3}"
-Influx_URL="${4}"
-Influx_Auth="${5}"
+Client="${3}"
+Port="${4}"
+Influx_URL="${5}"
+Influx_Auth="${6}"
 
 # 校验传参
 case ${Node} in
   host)
-    [ $# -eq 6 ] || error_msg
-    Plugin="${6}"
+    [ $# -eq 7 ] || error_msg
+    Plugin="${7}"
     ;;
   website)
-    [ $# -eq 10 ] || error_msg
-    HTTP_Proto="${6}"
-    HTTP_Auth="-a${7}"
-    HTTP_Url="-u${8}"
-    HTTP_SSL=${9}
-    HTTP_Name="${10}"
+    [ $# -eq 11 ] || error_msg
+    HTTP_Proto="${7}"
+    HTTP_Auth="-a${8}"
+    HTTP_Url="-u${9}"
+    HTTP_SSL=${10}
+    HTTP_Name="${11}"
     ;;
   mysql_status)
-    [ $# -eq 8 ] || error_msg
-    MYSQL_User="${6}"
-    MYSQL_Pwd="${7}"
-    MYSQL_Mode="${8}"
+    [ $# -eq 9 ] || error_msg
+    MYSQL_User="${7}"
+    MYSQL_Pwd="${8}"
+    MYSQL_Mode="${9}"
     ;;
   mysql_health)
-    [ $# -eq 10 ] || error_msg
-    MYSQL_User="${6}"
-    MYSQL_Pwd="${7}"
-    MYSQL_Health="${8}"
-    Warning="${9}"
-    Critical="${10}"
+    [ $# -eq 11 ] || error_msg
+    MYSQL_User="${7}"
+    MYSQL_Pwd="${8}"
+    MYSQL_Health="${9}"
+    Warning="${10}"
+    Critical="${11}"
     ;;
   mysql_data)
-    [ $# -eq 12 ] ||error_msg
-    MYSQL_User="${6}"
-    MYSQL_Pwd="${7}"
-    MYSQL_Database="${8}"
-    MYSQL_Data="${9}"
-    MYSQL_Select="SQL_${10}"
-    MYSQL_Comment="${11}"
-    MYSQL_Unit="${12}"
+    [ $# -eq 13 ] ||error_msg
+    MYSQL_User="${7}"
+    MYSQL_Pwd="${8}"
+    MYSQL_Database="${9}"
+    MYSQL_Data="${10}"
+    MYSQL_Select="SQL_${11}"
+    MYSQL_Comment="${12}"
+    MYSQL_Unit="${13}"
     ;;
   cpu|memory|disk|IO|interface|system)
-    [ $# -eq 10 ] || error_msg
-    NCPA_Token="${6}"
-    NCPA_Path="${7}"
-    Warning="${8}"
-    Critical="${9}"
-    Unit="${10}"
+    [ $# -eq 11 ] || error_msg
+    NCPA_Token="${7}"
+    NCPA_Path="${8}"
+    Warning="${9}"
+    Critical="${10}"
+    Unit="${11}"
     ;;
   nagios_plugins)
-    [ $# -eq 10 ] || error_msg
-    NCPA_Token="${6}"
-    NAGIOS_Plugin="${7}"
-    Warning="${8}"
-    Critical="${9}"
-    PLUGIN_Args="$(echo _${10}|sed 's/ /_/g')"
+    [ $# -eq 11 ] || error_msg
+    NCPA_Token="${7}"
+    NAGIOS_Plugin="${8}"
+    Warning="${9}"
+    Critical="${10}"
+    PLUGIN_Args="$(echo _${11}|sed 's/ /_/g')"
     ;;
   *)
     error_msg
