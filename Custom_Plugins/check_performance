@@ -77,13 +77,12 @@ case ${Node} in
     Critical="${10}"
     Unit="${11}"
     ;;
-  nagios_plugins)
-    [ $# -eq 11 ] || error_msg
+  load)
+    [ $# -eq 10 ] || error_msg
     NCPA_Token="${7}"
-    NAGIOS_Plugin="${8}"
-    Warning="${9}"
-    Critical="${10}"
-    PLUGIN_Args="$(echo _${11}|sed 's/ /_/g')"
+    Warning="${8}"
+    Critical="${9}"
+    PLUGIN_Args="$(echo _${10}|sed 's/ /_/g')"
     ;;
   *)
     error_msg
@@ -407,7 +406,7 @@ check_load(){
 
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "plugins/${Node}/${NAGIOS_Plugin}/-w_${Warning}_-c_${Critical}${PLUGIN_Args}")
+  -M "plugins/nagios_plugins/check_load/-w_${Warning}_-c_${Critical}${PLUGIN_Args}")
 
   # 存储检查返回值
   return_code=$?
@@ -436,7 +435,7 @@ l_Load_15=${Load_15}" \
   exit ${return_code}
 }
 
-check_http(){
+check_website(){
   # 校验参数
   [ "${HTTP_Auth}" == '-aNULL' ] && HTTP_Auth=''
   [ "${HTTP_Url}" == '-uNULL' ] && HTTP_Url=''
@@ -888,11 +887,11 @@ case ${Node} in
   system)
     system_info
     ;;
-  nagios_plugins)
-    ${NAGIOS_Plugin}
+  load)
+    check_load
     ;;
   website)
-    check_http
+    check_website
     ;;
   mysql_status)
     check_mysql_status
