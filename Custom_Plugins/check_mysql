@@ -1,0 +1,51 @@
+#!/bin/bash
+
+source /etc/profile
+source /usr/local/nagios/etc/data_sql.list
+
+MySQL="$(which mysql)"
+MySQL_Host="${2}"
+MySQL_Port="${3}"
+
+error_msg(){
+  echo 'Args Error.'
+  exit 3
+}
+
+case ${1} in
+  status)
+    [ $# -eq 3 ] || error_msg
+    ${MySQL} --html --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -e "\
+show global status where Variable_name regexp '\
+uptime$|\
+questions|\
+slow_queries|\
+threads_connected|\
+threads_cached|\
+threads_created|\
+com_commit|\
+com_rollback$|\
+innodb_buffer_pool_pages_dirty|\
+innodb_buffer_pool_pages_free|\
+innodb_buffer_pool_pages_total|\
+innodb_buffer_pool_reads|\
+innodb_buffer_pool_read_requests|\
+bytes_sent|\
+bytes_received|\
+table_locks_|\
+innodb_rows_';" 2>/dev/null
+    ;;
+  version)
+    [ $# -eq 3 ] || error_msg
+    ${MySQL} --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -e 'select version();' 2>/dev/null|tail -1
+    ;;
+  slave)
+    [ $# -eq 3 ] || error_msg
+    ${MySQL} --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -e 'show slave status\G;' 2>/dev/null|tail -1|grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*'
+    ;;
+  data)
+    [ $# -eq 5 ] || error_msg
+    Database=${4}
+    SQL="SQL_${5}"
+    ${MySQL} --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -D${Database} -e "${!SQL}" 2>/dev/null
+esac
