@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# 远端NCPA代理检查时需填写数据库账号密码
+#User=''
+#Password=''
+
 # 语句示例1
 SQL_test1="select value from TableName where condition1='value1';"
 
