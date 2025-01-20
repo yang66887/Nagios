@@ -83,9 +83,6 @@ case ${Node} in
     Warning="${8}"
     Critical="${9}"
     PLUGIN_Args="$(echo _${10}|sed 's/ /_/g')"
-    ;;
-  *)
-    error_msg
 esac
 
 # 检测依赖
@@ -497,9 +494,106 @@ n_Response_Time=${Response_Time}" \
   exit ${return_code}
 }
 
+check_remote(){
+  NCPA_Token=${7}
+  Check_Port=${8}
+  Protocol=${9}
+  case ${Protocol} in
+    http)
+      [ $# -eq 13 ] || error_msg
+      ARGs=''
+      # HTTP_Auth
+      [ "X${10}" != "XNULL" ] && ARGs="${ARGs}_-a'${10}'"
+      # HTTP_URL
+      [ "X${11}" != "XNULL" ] && ARGs="${ARGs}_-u'${11}'"
+      # HTTP_SSL
+      [ "X${12}" != "X0" ] && ARGs="${ARGs}_-S'"
+      HTTP_Name=${13}
+      # 执行检查并存储检查结果
+      result=$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}"\
+      -M "plugins/nagios_plugins/check_http/-H${Client}_-p${Port}${ARGs}")
+      # 存储检查返回值
+      return_code=$?
+      if [ $(echo ${result}|grep ^HTTP|wc -l) -eq 1 ];then
+        # 分离并存储检查结果中的部分数值
+        Http_Status="$(echo ${result}|awk '{print $2}'|sed 's/://g')"
+        Http_Code="$(echo ${result}|awk '{print $4}')"
+        Response_Time="$(echo ${result}|sed 's/.*|time=\([0-9.]*\)s.*/\1/g')"
+      fi
+      if [ $(py_isdigit ${Http_Code}) -eq 0 ];then
+        # 将检查结果写入 Influxdb
+        curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+        --data-binary "\
+Web_Status,\
+Host=${Client},\
+i_Web_Name=${HTTP_Name},\
+j_Web_Port=${Port},\
+k_Protocol=${Protocol},\
+o_Response_Time_Unit=s \
+l_Web_Status=\"${Http_Status}\",\
+m_Http_Code=${Http_Code},\
+n_Response_Time=${Response_Time}" \
+&>/dev/null
+      fi
+      ;;
+    tcp)
+      [ $# -eq 13 ] || error_msg
+      HTTP_Name=${13}
+      # 执行检查并存储检查结果
+      result=$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}"\
+      -M "plugins/nagios_plugins/check_tcp/-H${Client}_-p${Port}")
+      # 存储检查返回值
+      return_code=$?
+      if [ ${return_code} -eq 0 ];then
+        Http_Status='OK'
+        Http_Code=200
+        Response_Time="$(echo ${result}|sed 's/.*time=\(.*\)s.*/\1/g')"
+      else
+        Http_Status='CRITICAL'
+        Http_Code=500
+        Response_Time=5
+      fi
+      # 将检查结果写入 Influxdb
+      curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
+      --data-binary "\
+Web_Status,\
+Host=${Client},\
+i_Web_Name=${HTTP_Name},\
+j_Web_Port=${Port},\
+k_Protocol=${Protocol},\
+o_Response_Time_Unit=s \
+l_Web_Status=\"${Http_Status}\",\
+m_Http_Code=${Http_Code},\
+n_Response_Time=${Response_Time}" \
+&>/dev/null
+      ;;
+    mysql)
+      [ $# -eq 10 ] || error_msg
+      MYSQL_Mode=${10}
+      check_mysql_status ${Check_Port}
+      ;;
+    data)
+      [ $# -eq 14 ] ||error_msg
+      MYSQL_Database="${10}"
+      MYSQL_Data="${11}"
+      MYSQL_Select="${12}"
+      MYSQL_Comment="${13}"
+      MYSQL_Unit="${14}"
+      check_mysql_data ${Check_Port}
+  esac
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
 check_mysql_status(){
-  # 执行检查并存储检查结果
-  MySQL_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
+  case $# in
+    0)
+      # 获取本地MySQL Status数据
+      MySQL_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
 show global status where Variable_name regexp '\
 uptime$|\
 questions|\
@@ -518,52 +612,53 @@ bytes_sent|\
 bytes_received|\
 table_locks_|\
 innodb_rows_';" 2>/dev/null)"
+      # 记录返回值
+      return_code=$?
+      # 检查返回值，MySQL OK：0
+      [ ${return_code} -ne 0 ] && echo '数据库状态异常，请尽快检查！' && exit ${return_code}
+      # 获取本地MySQL版本
+      MySQL_Version="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e 'select version();' 2>/dev/null|tail -1)"
+      # 获取本地MySQL Slave节点状态
+      if [ ${MYSQL_Mode} -eq 1 ];then
+        Slave_Status="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"show slave status\G;" 2>/dev/null|grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*')"
+      fi
+      ;;
+    1)
+      Check_Port=$1
+      # 获取远端MySQL Status数据
+      MySQL_Status="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/status/${Client}/${Port}")"
+      # 记录返回值
+      return_code=$?
+      # 检查返回值，MySQL OK：0
+      [ ${return_code} -ne 0 ] && echo '数据库状态异常，请尽快检查！' && exit ${return_code}
+      # 获取远端MySQL版本
+      MySQL_Version="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/version/${Client}/${Port}")"
+      # 获取远端MySQL Slave节点状态
+      if [ ${MYSQL_Mode} -eq 1 ];then
+        Slave_Status="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/slave/${Client}/${Port}")"
+      fi
+  esac
 
-  # 记录返回值
-  return_code=$?
-
-  # 检查返回值，MySQL OK：0
-  [ ${return_code} -ne 0 ] && echo '数据库状态异常，请尽快检查！' && exit ${return_code}
-
-  # 将检查结果格式化为变量
+  # 将MySQL Status数据格式化并导入为变量
   MySQL_Status=$(echo ${MySQL_Status}|sed -e 's/<TR><TD>/\n/g' -e 's/<\/TD><TD>/=/g'|sed -e 's/<.*>$//g' -e '/^$/d')
-
-  # 导入检查结果
   export $(echo ${MySQL_Status})
 
-  # 获取MySQL Server Version
-  MySQL_Version="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e '
-  select version();' 2>/dev/null|\
-  tail -1)"
+  # 拼接MySQL版本号
   MySQL_Version="MySQL_${MySQL_Version}"
 
   # 检查并存储从库同步状态，主库：MYSQL_Mode = 0，从库：MYSQL_Mode = 1
   if [ ${MYSQL_Mode} -eq 1 ];then
-    Slave_Status="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
-    show slave status\G;" 2>/dev/null|\
-    grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*'|\
-    sed -e 's/: /=/g' -e 's/=\([A-Za-z]*$\)/="\1"/g'|\
-    tr '\n' ','|\
-    sed 's/,$//g')"
+    Slave_Status="$(echo ${Slave_Status}|sed -e 's/: /=/g' -e 's/=\([A-Za-z]*\) /="\1" /g'|tr ' ' ',')"
   else
     Slave_Status='Slave_IO_Running="NULL",Slave_SQL_Running="NULL",Seconds_Behind_Master=0'
   fi
 
-  # 获取上一次检查部分状态数值
+  # 获取上一次检查Uptime数值
   Last_Uptime=$(influx_mysql_status Uptime)
-  Last_Bytes_received=$(influx_mysql_status Bytes_received)
-  Last_Bytes_sent=$(influx_mysql_status Bytes_sent)
-  Last_Questions=$(influx_mysql_status Questions)
-  Last_Slow_queries=$(influx_mysql_status Slow_queries)
-  Last_Com_commit=$(influx_mysql_status Com_commit)
-  Last_Com_rollback=$(influx_mysql_status Com_rollback)
-  Last_Innodb_rows_read=$(influx_mysql_status Innodb_rows_read)
-  Last_Innodb_rows_inserted=$(influx_mysql_status Innodb_rows_inserted)
-  Last_Innodb_rows_deleted=$(influx_mysql_status Innodb_rows_deleted)
-  Last_Innodb_rows_updated=$(influx_mysql_status Innodb_rows_updated)
 
-  # 检查MySQL是否重启
-  if [ $(echo ${Uptime} ${Last_Uptime}|awk '{print $1<$2}') -eq 1 ];then
+  # 检查MySQL是否重启 或 InfluxDB中是否有存储MySQL Status数据
+  if [ $(echo ${Uptime} ${Last_Uptime}|awk '{print $1<$2}') -eq 1 -o ${Last_Uptime} -eq 0 ];then
+    # 如重启过或无数据，则将部分状态上次检查数据置零
     Last_Uptime=0
     Last_Bytes_received=0
     Last_Bytes_sent=0
@@ -575,6 +670,18 @@ innodb_rows_';" 2>/dev/null)"
     Last_Innodb_rows_inserted=0
     Last_Innodb_rows_deleted=0
     Last_Innodb_rows_updated=0
+  else
+    # 如未重启且有数据，则获取部分状态上次检查数据
+    Last_Bytes_received=$(influx_mysql_status Bytes_received)
+    Last_Bytes_sent=$(influx_mysql_status Bytes_sent)
+    Last_Questions=$(influx_mysql_status Questions)
+    Last_Slow_queries=$(influx_mysql_status Slow_queries)
+    Last_Com_commit=$(influx_mysql_status Com_commit)
+    Last_Com_rollback=$(influx_mysql_status Com_rollback)
+    Last_Innodb_rows_read=$(influx_mysql_status Innodb_rows_read)
+    Last_Innodb_rows_inserted=$(influx_mysql_status Innodb_rows_inserted)
+    Last_Innodb_rows_deleted=$(influx_mysql_status Innodb_rows_deleted)
+    Last_Innodb_rows_updated=$(influx_mysql_status Innodb_rows_updated)
   fi
 
   # 锁表率
@@ -738,15 +845,21 @@ check_mysql_health(){
 }
 
 check_mysql_data(){
-  # 加载SQL语句定义文件
-  source /usr/local/nagios/etc/data_sql.list || error_msg
-
-  # 执行查询语句并存储查询结果
-  result=$(mysql -h${Host} -P${Port} -u"${MYSQL_User}" -p"${MYSQL_Pwd}" -D"${MYSQL_Database}" -e "${!MYSQL_Select}" 2>/dev/null)
-
-  # 存储返回值
-  return_code=$?
-
+  case $# in
+    0)
+      # 加载SQL语句定义文件
+      source /usr/local/nagios/etc/data_sql.list || error_msg
+      # 执行查询语句并存储查询结果
+      result=$(mysql -h${Host} -P${Port} -u"${MYSQL_User}" -p"${MYSQL_Pwd}" -D"${MYSQL_Database}" -e "${!MYSQL_Select}" 2>/dev/null)
+      # 存储返回值
+      return_code=$?
+      ;;
+    1)
+      # 执行查询语句并存储查询结果
+      result="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/data/${Client}/${Port}/${MYSQL_Database}/${MYSQL_Select}")"
+      # 记录返回值
+      return_code=$?
+  esac
   # 根据返回值判断查询是否成功
   if [ ${return_code} -eq 0 ];then
     # 过滤查询结果
@@ -892,6 +1005,9 @@ case ${Node} in
     ;;
   website)
     check_website
+    ;;
+  remote)
+    check_remote $*
     ;;
   mysql_status)
     check_mysql_status
