@@ -101,31 +101,31 @@ C:\Program Files\Nagios\NCPA\plugins\systeminfo.bat
 ## Nginx 代理分发 NCPA 请求
 >`Nginx for NCPA`
 ```shell
-server {
-  listen 5694 ssl;
-  server_name localhost;
-
-  # 拷贝自NCPA安装目录/var/ncpa.crt
-  ssl_certificate           ncpa.crt;
-  # 拷贝自NCPA安装目录/var/ncpa.key
-  ssl_certificate_key       ncpa.key;
-  ssl_session_cache         shared:SSL:1m;
-  ssl_session_timeout       5m;
-  ssl_protocols             TLSv1.2 TLSv1.3;
-  ssl_ciphers               HIGH:!RC4:!MD5:!aNULL:!eNULL:!NULL:!DH:!EDH:!EXP:+MEDIUM;
-  ssl_prefer_server_ciphers on;
-
-  location / {
-    return 403;
-  }
-
-  location /api/ {
-    set $NCPA_Server 'localhost';
-    if ($uri ~* '^/api.*/(\d*?\.\d*?\.\d*?\.\d*?)/$') {
-      set $NCPA_Server $1;
+  server {
+    listen 5694 ssl;
+    server_name localhost;
+  
+    # 拷贝自NCPA安装目录/var/ncpa.crt
+    ssl_certificate           ncpa.crt;
+    # 拷贝自NCPA安装目录/var/ncpa.key
+    ssl_certificate_key       ncpa.key;
+    ssl_session_cache         shared:SSL:1m;
+    ssl_session_timeout       5m;
+    ssl_protocols             TLSv1.2 TLSv1.3;
+    ssl_ciphers               HIGH:!RC4:!MD5:!aNULL:!eNULL:!NULL:!DH:!EDH:!EXP:+MEDIUM;
+    ssl_prefer_server_ciphers on;
+  
+    location / {
+      return 403;
     }
-    rewrite ^(/api.*)/\d*?\.\d*?\.\d*?\.\d*?/$ $1/ break;
-    proxy_pass https://$NCPA_Server:5693;
+  
+    location /api/ {
+      set $NCPA_Server 'localhost';
+      if ($uri ~* '^/api.*/(\d*?\.\d*?\.\d*?\.\d*?)/$') {
+        set $NCPA_Server $1;
+      }
+      rewrite ^(/api.*)/\d*?\.\d*?\.\d*?\.\d*?/$ $1/ break;
+      proxy_pass https://$NCPA_Server:5693;
+    }
   }
-}
 ```
