@@ -100,6 +100,7 @@ C:\Program Files\Nagios\NCPA\plugins\systeminfo.bat
 
 ## Nginx 代理分发 NCPA 请求
 >`Nginx for NCPA`
+>`同一IP和端口同时指向多个NCPA Server`
 ```shell
   server {
     listen 5694 ssl;
