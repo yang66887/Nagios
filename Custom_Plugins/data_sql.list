@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 远端NCPA代理检查时需填写数据库账号密码
+# Nginx代理NCPA检查时需填写数据库账号密码
 #User=''
 #Password=''
 
