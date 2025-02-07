@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 调用示例
-# $USER1$/monitor $_SERVICENODE$ $HOSTADDRESS$ $_HOSTPORT$ $USER4$ $USER5$ $USER6$ $_SERVICEPATH$ $_SERVICEWARNING$ $_SERVICECRITICAL$ $_SERVICEUNIT$
+# $USER1$/monitor $_HOSTPROXY$ $_SERVICENODE$ $HOSTADDRESS$ $_HOSTPORT$ $USER4$ $USER5$ $USER6$ $_SERVICEPATH$ $_SERVICEWARNING$ $_SERVICECRITICAL$ $_SERVICEUNIT$
 
 # 插件路径
 plugins='/usr/local/nagios/libexec'
@@ -14,7 +14,7 @@ dep_msg(){
 }
 
 help_msg(){
-  echo "$0 Node NCPA_Address Port Influxdb_Address:Influxdb_Port Influxdb_User:Influxdb_Password NCPA_Token NCPA_Metrics Warning_Value Critical_Value [NCPA_Unit]"
+  echo "$0 Proxy Node NCPA_Address Port Influxdb_Address:Influxdb_Port Influxdb_User:Influxdb_Password NCPA_Token NCPA_Metrics Warning_Value Critical_Value [NCPA_Unit]"
   exit 0
 }
 
@@ -24,65 +24,76 @@ error_msg(){
 }
 
 # 接收传参
-Node="${1}"
-Host="${2}"
-Client="${3}"
-Port="${4}"
-Influx_URL="${5}"
-Influx_Auth="${6}"
+Proxy="${1}"
+Node="${2}"
+Host="${3}"
+Client="${4}"
+Port="${5}"
+Influx_URL="${6}"
+Influx_Auth="${7}"
+
+# 是否使用代理
+[ ${Proxy} -eq 1 ] && PROXY="/${Client}"
 
 # 校验传参
 case ${Node} in
   host)
-    [ $# -eq 7 ] || error_msg
-    Plugin="${7}"
+    [ $# -eq 8 ] || error_msg
+    Plugin="${8}"
     ;;
   website)
-    [ $# -eq 11 ] || error_msg
-    HTTP_Proto="${7}"
-    HTTP_Auth="-a${8}"
-    HTTP_Url="-u${9}"
-    HTTP_SSL=${10}
-    HTTP_Name="${11}"
+    [ $# -eq 15 ] || error_msg
+    NCPA_Token="${8}"
+    HTTP_Proxy="${9}"
+    HTTP_Proto="${10}"
+    HTTP_Port="${11}"
+    HTTP_Auth="${12}"
+    HTTP_Url="${13}"
+    HTTP_SSL=${14}
+    HTTP_Name="${15}"
     ;;
   mysql_status)
-    [ $# -eq 9 ] || error_msg
-    MYSQL_User="${7}"
-    MYSQL_Pwd="${8}"
-    MYSQL_Mode="${9}"
+    [ $# -eq 12 ] || error_msg
+    NCPA_Token="${8}"
+    MYSQL_Port="${9}"
+    MYSQL_User="${10}"
+    MYSQL_Pwd="${11}"
+    MYSQL_Mode="${12}"
     ;;
   mysql_health)
-    [ $# -eq 11 ] || error_msg
-    MYSQL_User="${7}"
-    MYSQL_Pwd="${8}"
-    MYSQL_Health="${9}"
-    Warning="${10}"
-    Critical="${11}"
+    [ $# -eq 12 ] || error_msg
+    MYSQL_User="${8}"
+    MYSQL_Pwd="${9}"
+    MYSQL_Health="${10}"
+    Warning="${11}"
+    Critical="${12}"
     ;;
   mysql_data)
-    [ $# -eq 13 ] ||error_msg
-    MYSQL_User="${7}"
-    MYSQL_Pwd="${8}"
-    MYSQL_Database="${9}"
-    MYSQL_Data="${10}"
-    MYSQL_Select="SQL_${11}"
-    MYSQL_Comment="${12}"
-    MYSQL_Unit="${13}"
+    [ $# -eq 16 ] ||error_msg
+    NCPA_Token="${8}"
+    MYSQL_Port="${9}"
+    MYSQL_User="${10}"
+    MYSQL_Pwd="${11}"
+    MYSQL_Database="${12}"
+    MYSQL_Data="${13}"
+    MYSQL_Select="SQL_${14}"
+    MYSQL_Comment="${15}"
+    MYSQL_Unit="${16}"
     ;;
   cpu|memory|disk|IO|interface|system)
-    [ $# -eq 11 ] || error_msg
-    NCPA_Token="${7}"
-    NCPA_Path="${8}"
-    Warning="${9}"
-    Critical="${10}"
-    Unit="${11}"
+    [ $# -eq 12 ] || error_msg
+    NCPA_Token="${8}"
+    NCPA_Path="${9}"
+    Warning="${10}"
+    Critical="${11}"
+    Unit="${12}"
     ;;
   load)
-    [ $# -eq 10 ] || error_msg
-    NCPA_Token="${7}"
-    Warning="${8}"
-    Critical="${9}"
-    PLUGIN_Args="$(echo _${10}|sed 's/ /_/g')"
+    [ $# -eq 11 ] || error_msg
+    NCPA_Token="${8}"
+    Warning="${9}"
+    Critical="${10}"
+    PLUGIN_Args="$(echo _${11}|sed 's/ /_/g')"
 esac
 
 # 检测依赖
@@ -229,7 +240,7 @@ m_Response_Time=${Response_time}" \
 check_cpu(){
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "${Node}/${NCPA_Path}" -q "aggregate=${Unit}" -w ${Warning} -c ${Critical})
+  -M "${Node}/${NCPA_Path}${PROXY}" -q "aggregate=${Unit}" -w ${Warning} -c ${Critical})
 
   # 存储检查返回值
   return_code=$?
@@ -258,7 +269,7 @@ j_Cpu_Percent=${CPU_percent}" \
 check_mem(){
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "${Node}/${NCPA_Path}" -w ${Warning} -c ${Critical} -u ${Unit})
+  -M "${Node}/${NCPA_Path}${PROXY}" -w ${Warning} -c ${Critical} -u ${Unit})
 
   # 存储检查返回值
   return_code=$?
@@ -297,7 +308,7 @@ check_disk(){
 
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "${Node}/logical/${mount_point}" -w ${Warning} -c ${Critical} -u ${Unit})
+  -M "${Node}/logical/${mount_point}${PROXY}" -w ${Warning} -c ${Critical} -u ${Unit})
 
   # 存储检查返回值
   return_code=$?
@@ -337,7 +348,7 @@ check_IO(){
 
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "disk/physical/${NCPA_Path}" -w ${Warning} -c ${Critical} -u ${Unit} -d)
+  -M "disk/physical/${NCPA_Path}${PROXY}" -w ${Warning} -c ${Critical} -u ${Unit} -d)
 
   # 存储检查返回值
   return_code=$?
@@ -369,7 +380,7 @@ l_IO_Value=${IO_current}" \
 check_interface(){
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "${Node}/${NCPA_Path}" -w ${Warning} -c ${Critical} -u ${Unit} -d)
+  -M "${Node}/${NCPA_Path}${PROXY}" -w ${Warning} -c ${Critical} -u ${Unit} -d)
 
   # 存储检查返回值
   return_code=$?
@@ -399,11 +410,11 @@ k_Traffic_Current=${Traffic_current}" \
 
 check_load(){
   # 校验参数
-  [ "${PLUGIN_Args}" == '_NULL' ] && PLUGIN_Args=''
+  [ "X${PLUGIN_Args}" == 'X_NULL' ] && PLUGIN_Args=''
 
   # 执行检查并存储检查结果
   result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "plugins/nagios_plugins/check_load/-w_${Warning}_-c_${Critical}${PLUGIN_Args}")
+  -M "plugins/nagios_plugins/check_load/-w_${Warning}_-c_${Critical}${PLUGIN_Args}${PROXY}")
 
   # 存储检查返回值
   return_code=$?
@@ -433,21 +444,30 @@ l_Load_15=${Load_15}" \
 }
 
 check_website(){
-  # 校验参数
-  [ "${HTTP_Auth}" == '-aNULL' ] && HTTP_Auth=''
-  [ "${HTTP_Url}" == '-uNULL' ] && HTTP_Url=''
-  if [ ${HTTP_SSL} -eq 1 ];then
-    HTTP_SSL='-S'
-  else
-    HTTP_SSL=''
-  fi
-
   case ${HTTP_Proto} in
     http)
-      # 执行检查并存储检查结果
-      result=$(${plugins}/check_http -H${Host} -p${Port} ${HTTP_Auth} ${HTTP_Url} ${HTTP_SSL})
-      # 存储检查返回值
-      return_code=$?
+      ARGs=''
+      if [ ${Proxy} -eq 0 ];then
+        # 校验参数
+        [ "X${HTTP_Auth}" != "XNULL" ] && ARGs="$(echo ${ARGs} -a${HTTP_Auth})"
+        [ "X${HTTP_Url}" != "XNULL" ] && ARGs="$(echo ${ARGs} -u${HTTP_Url})"
+        [ ${HTTP_SSL} -eq 1 ] && ARGs="$(echo ${ARGs} -S})"
+        # 执行检查并存储检查结果
+        result=$(${plugins}/check_http -H${Host} -p${HTTP_Port} ${ARGs})
+        # 存储检查返回值
+        return_code=$?
+      elif [ ${Proxy} -eq 1 ];then
+        PROXY="/${HTTP_Proxy}"
+        # 校验参数
+        [ "X${HTTP_Auth}" != "XNULL" ] && ARGs="$(echo ${ARGs}_-a${HTTP_Auth})"
+        [ "X${HTTP_Url}" != "XNULL" ] && HTTP_Url="$(echo ${HTTP_Url}|sed 's/\//|/g')" && ARGs="$(echo ${ARGs}_-u${HTTP_Url})"
+        [ ${HTTP_SSL} -eq 1 ] && ARGs="$(echo ${ARGs}_-S})"
+        # 执行检查并存储检查结果
+        result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+        -M "plugins/nagios_plugins/check_http/-H${Client}_-p${HTTP_Port}${ARGs}${PROXY}")
+        # 存储检查返回值
+        return_code=$?
+      fi
       if [ $(echo ${result}|grep ^HTTP|wc -l) -eq 1 ];then
         # 分离并存储检查结果中的部分数值
         Http_Status="$(echo ${result}|awk '{print $2}'|sed 's/://g')"
@@ -456,10 +476,19 @@ check_website(){
       fi
       ;;
     tcp)
-      # 执行检查并存储检查结果
-      result=$(${plugins}/check_tcp -H${Host} -p${Port})
-      # 存储检查返回值
-      return_code=$?
+      if [ ${Proxy} -eq 0 ];then
+        # 执行检查并存储检查结果
+        result=$(${plugins}/check_tcp -H${Host} -p${HTTP_Port})
+        # 存储检查返回值
+        return_code=$?
+      elif [ ${Proxy} -eq 1 ];then
+        PROXY="/${HTTP_Proxy}"
+        # 执行检查并存储检查结果
+        result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+        -M "plugins/nagios_plugins/check_tcp/-H${Client}_-p${HTTP_Port}${PROXY}")
+        # 存储检查返回值
+        return_code=$?
+      fi
       if [ ${return_code} -eq 0 ];then
         Http_Status='OK'
         Http_Code=200
@@ -478,7 +507,7 @@ check_website(){
 Web_Status,\
 Host=${Client},\
 i_Web_Name=${HTTP_Name},\
-j_Web_Port=${Port},\
+j_Web_Port=${HTTP_Port},\
 k_Protocol=${HTTP_Proto},\
 o_Response_Time_Unit=s \
 l_Web_Status=\"${Http_Status}\",\
@@ -494,106 +523,11 @@ n_Response_Time=${Response_Time}" \
   exit ${return_code}
 }
 
-check_remote(){
-  NCPA_Token=${7}
-  Check_Port=${8}
-  Protocol=${9}
-  case ${Protocol} in
-    http)
-      [ $# -eq 13 ] || error_msg
-      ARGs=''
-      # HTTP_Auth
-      [ "X${10}" != "XNULL" ] && ARGs="${ARGs}_-a'${10}'"
-      # HTTP_URL
-      [ "X${11}" != "XNULL" ] && ARGs="${ARGs}_-u'${11}'"
-      # HTTP_SSL
-      [ "X${12}" != "X0" ] && ARGs="${ARGs}_-S'"
-      HTTP_Name=${13}
-      # 执行检查并存储检查结果
-      result=$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}"\
-      -M "plugins/nagios_plugins/check_http/-H${Client}_-p${Port}${ARGs}")
-      # 存储检查返回值
-      return_code=$?
-      if [ $(echo ${result}|grep ^HTTP|wc -l) -eq 1 ];then
-        # 分离并存储检查结果中的部分数值
-        Http_Status="$(echo ${result}|awk '{print $2}'|sed 's/://g')"
-        Http_Code="$(echo ${result}|awk '{print $4}')"
-        Response_Time="$(echo ${result}|sed 's/.*|time=\([0-9.]*\)s.*/\1/g')"
-      fi
-      if [ $(py_isdigit ${Http_Code}) -eq 0 ];then
-        # 将检查结果写入 Influxdb
-        curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
-        --data-binary "\
-Web_Status,\
-Host=${Client},\
-i_Web_Name=${HTTP_Name},\
-j_Web_Port=${Port},\
-k_Protocol=${Protocol},\
-o_Response_Time_Unit=s \
-l_Web_Status=\"${Http_Status}\",\
-m_Http_Code=${Http_Code},\
-n_Response_Time=${Response_Time}" \
-&>/dev/null
-      fi
-      ;;
-    tcp)
-      [ $# -eq 13 ] || error_msg
-      HTTP_Name=${13}
-      # 执行检查并存储检查结果
-      result=$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}"\
-      -M "plugins/nagios_plugins/check_tcp/-H${Client}_-p${Port}")
-      # 存储检查返回值
-      return_code=$?
-      if [ ${return_code} -eq 0 ];then
-        Http_Status='OK'
-        Http_Code=200
-        Response_Time="$(echo ${result}|sed 's/.*time=\(.*\)s.*/\1/g')"
-      else
-        Http_Status='CRITICAL'
-        Http_Code=500
-        Response_Time=5
-      fi
-      # 将检查结果写入 Influxdb
-      curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
-      --data-binary "\
-Web_Status,\
-Host=${Client},\
-i_Web_Name=${HTTP_Name},\
-j_Web_Port=${Port},\
-k_Protocol=${Protocol},\
-o_Response_Time_Unit=s \
-l_Web_Status=\"${Http_Status}\",\
-m_Http_Code=${Http_Code},\
-n_Response_Time=${Response_Time}" \
-&>/dev/null
-      ;;
-    mysql)
-      [ $# -eq 10 ] || error_msg
-      MYSQL_Mode=${10}
-      check_mysql_status ${Check_Port}
-      ;;
-    data)
-      [ $# -eq 14 ] ||error_msg
-      MYSQL_Database="${10}"
-      MYSQL_Data="${11}"
-      MYSQL_Select="${12}"
-      MYSQL_Comment="${13}"
-      MYSQL_Unit="${14}"
-      check_mysql_data ${Check_Port}
-  esac
-
-  # 输出检查结果
-  echo ${result}
-
-  # 退出脚本
-  exit ${return_code}
-}
-
 check_mysql_status(){
-  case $# in
+  case ${Proxy} in
     0)
-      # 获取本地MySQL Status数据
-      MySQL_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
+      # 获取MySQL Status数据
+      MySQL_Status="$(mysql --html --ssl-mode=disabled -h${Host} -P${MYSQL_Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"\
 show global status where Variable_name regexp '\
 uptime$|\
 questions|\
@@ -616,26 +550,25 @@ innodb_rows_';" 2>/dev/null)"
       return_code=$?
       # 检查返回值，MySQL OK：0
       [ ${return_code} -ne 0 ] && echo '数据库状态异常，请尽快检查！' && exit ${return_code}
-      # 获取本地MySQL版本
-      MySQL_Version="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e 'select version();' 2>/dev/null|tail -1)"
-      # 获取本地MySQL Slave节点状态
+      # 获取MySQL版本
+      MySQL_Version="$(mysql --ssl-mode=disabled -h${Host} -P${MYSQL_Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e 'select version();' 2>/dev/null|tail -1)"
+      # 获取MySQL Slave节点状态
       if [ ${MYSQL_Mode} -eq 1 ];then
-        Slave_Status="$(mysql --ssl-mode=disabled -h${Host} -P${Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"show slave status\G;" 2>/dev/null|grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*')"
+        Slave_Status="$(mysql --ssl-mode=disabled -h${Host} -P${MYSQL_Port} -u${MYSQL_User} -p${MYSQL_Pwd} -e"show slave status\G;" 2>/dev/null|grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*')"
       fi
       ;;
     1)
-      Check_Port=$1
-      # 获取远端MySQL Status数据
-      MySQL_Status="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/status/${Client}/${Port}")"
+      # 获取MySQL Status数据
+      MySQL_Status="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}" -M "plugins/check_mysql/status/${Client}/${MYSQL_Port}${PROXY}")"
       # 记录返回值
       return_code=$?
       # 检查返回值，MySQL OK：0
       [ ${return_code} -ne 0 ] && echo '数据库状态异常，请尽快检查！' && exit ${return_code}
-      # 获取远端MySQL版本
-      MySQL_Version="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/version/${Client}/${Port}")"
-      # 获取远端MySQL Slave节点状态
+      # 获取MySQL版本
+      MySQL_Version="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}" -M "plugins/check_mysql/version/${Client}/${MYSQL_Port}${PROXY}")"
+      # 获取MySQL Slave节点状态
       if [ ${MYSQL_Mode} -eq 1 ];then
-        Slave_Status="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/slave/${Client}/${Port}")"
+        Slave_Status="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}" -M "plugins/check_mysql/slave/${Client}/${MYSQL_Port}${PROXY}")"
       fi
   esac
 
@@ -741,7 +674,7 @@ innodb_rows_';" 2>/dev/null)"
   --data-binary "\
 MySQL_Status,\
 Host=${Client},\
-MySQL_Port=${Port},\
+MySQL_Port=${MYSQL_Port},\
 MySQL_Mode=${MYSQL_Mode},\
 MySQL_Status=${return_code} \
 Uptime=${Uptime},\
@@ -845,18 +778,18 @@ check_mysql_health(){
 }
 
 check_mysql_data(){
-  case $# in
+  case ${Proxy} in
     0)
       # 加载SQL语句定义文件
       source /usr/local/nagios/etc/data_sql.list || error_msg
       # 执行查询语句并存储查询结果
-      result=$(mysql -h${Host} -P${Port} -u"${MYSQL_User}" -p"${MYSQL_Pwd}" -D"${MYSQL_Database}" -e "${!MYSQL_Select}" 2>/dev/null)
+      result=$(mysql -h${Host} -P${MYSQL_Port} -u"${MYSQL_User}" -p"${MYSQL_Pwd}" -D"${MYSQL_Database}" -e "${!MYSQL_Select}" 2>/dev/null)
       # 存储返回值
       return_code=$?
       ;;
     1)
       # 执行查询语句并存储查询结果
-      result="$(${ncpa} -H ${Host} -P ${Check_Port} -t "${NCPA_Token}" -M "plugins/check_mysql/data/${Client}/${Port}/${MYSQL_Database}/${MYSQL_Select}")"
+      result="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}" -M "plugins/check_mysql/data/${Client}/${MYSQL_Port}/${MYSQL_Database}/${MYSQL_Select}${PROXY}")"
       # 记录返回值
       return_code=$?
   esac
@@ -913,34 +846,28 @@ system_info(){
     Windows)
       # 操作系统以及内核版本
       OS_Info=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo.bat/os")
+      -M "plugins/systeminfo.bat/os${PROXY}")
       OS_Version=$(echo ${OS_Info}|sed 's/^OS Name: *\(Microsoft.*\) *OS Version:.*$/\1/g')
       Kernel_Version=$(echo ${OS_Info}|sed 's/^.*OS Version: *\(.*\)$/\1/g')
       # CPU核心数
       Cores_Count=$(py_sum $(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo.bat/cpu"|grep -v ^$|tr '\n' ','|sed -e 's/ //g' -e 's/,$//g'))
-      # 磁盘总量
-      #Disk_Total="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      #-M "disk/logical" -u Ki -l|sed 's/ //g'|sed ":a;N;s/\[\n//g;ta"|grep -E '[A-Z]:\||total'|tr '\n' '='|sed -e 's/total//g' -e 's/["{:|]//g' -e 's/,=/,/g' -e 's/,$//g')"
+      -M "plugins/systeminfo.bat/cpu${PROXY}"|grep -v ^$|tr '\n' ','|sed -e 's/ //g' -e 's/,$//g'))
       ;;
     Linux)
       # 操作系统版本
       OS_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo/system")
+      -M "plugins/systeminfo/system${PROXY}")
       # 内核版本
       Kernel_Version=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo/kernel")
+      -M "plugins/systeminfo/kernel${PROXY}")
       # CPU核心数
       Cores_Count=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      -M "plugins/systeminfo/cpu")
-      # 磁盘总量
-      #Disk_Total="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-      #-M "disk/logical" -u Ki -l|sed 's/ //g'|sed ":a;N;s/\[\n//g;ta"|grep -E '\||\|[a-zA-Z]|total'|tr '\n' '='|sed -e 's/total//g' -e 's/["{:]//g' -e 's/,=/,/g' -e 's/|/\//g' -e 's/,$//g')"
+      -M "plugins/systeminfo/cpu${PROXY}")
   esac
 
   # 系统启动时间
   Uptime=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-    -M "system/uptime"|awk -F= '{print $NF}'|sed 's/[s;]//g')
+    -M "system/uptime${PROXY}"|awk -F= '{print $NF}'|sed 's/[s;]//g')
   return_code=$?
   if [ ${return_code} -eq 0 ];then
     System_status='OK'
@@ -948,13 +875,9 @@ system_info(){
     System_status='Warning'
   fi
 
-  # 内存总量
-  #Memory_Total=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-    #-M "memory/virtual/total" -u Ki|awk '{print $4}')
-
   # 总进程数
   Processes_Total="$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-  -M "processes"|head -1|awk '{print $7}'|sed "s/[';]//g"|awk -F= '{print $NF}')"
+  -M "processes${PROXY}"|head -1|awk '{print $7}'|sed "s/[';]//g"|awk -F= '{print $NF}')"
 
   # 将检查结果写入 Influxdb
   curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata"\
@@ -1005,9 +928,6 @@ case ${Node} in
     ;;
   website)
     check_website
-    ;;
-  remote)
-    check_remote $*
     ;;
   mysql_status)
     check_mysql_status
