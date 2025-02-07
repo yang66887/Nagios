@@ -46,6 +46,6 @@ innodb_rows_';" 2>/dev/null
   data)
     [ $# -eq 5 ] || error_msg
     Database=${4}
-    SQL="SQL_${5}"
+    SQL="${5}"
     ${MySQL} --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -D${Database} -e "${!SQL}" 2>/dev/null
 esac
