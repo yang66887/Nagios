@@ -41,7 +41,7 @@ innodb_rows_';" 2>/dev/null
     ;;
   slave)
     [ $# -eq 3 ] || error_msg
-    ${MySQL} --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -e 'show slave status\G;' 2>/dev/null|tail -1|grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*'
+    ${MySQL} --ssl-mode=disabled -h${MySQL_Host} -P${MySQL_Port} -u${User} -p${Password} -e 'show slave status\G;' 2>/dev/null|grep -Eo 'Slave_.*_Running:.*|Seconds_Behind_Master:.*'
     ;;
   data)
     [ $# -eq 5 ] || error_msg
