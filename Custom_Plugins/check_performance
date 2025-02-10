@@ -38,8 +38,10 @@ Influx_Auth="${7}"
 # 校验传参
 case ${Node} in
   host)
-    [ $# -eq 8 ] || error_msg
-    Plugin="${8}"
+    [ $# -eq 10 ] || error_msg
+    NCPA_Token="${8}"
+    Plugin="${9}"
+    [ ${Proxy} -eq 1 ] && PROXY="/${10}"
     ;;
   website)
     [ $# -eq 15 ] || error_msg
@@ -188,10 +190,18 @@ influx_mysql_status(){
 check_host(){
   case ${Plugin} in
     ping)
-      # 执行检查并存储检查结果
-      result="$(${plugins}/check_ping -H${Host} -w 3000.0,80% -c 5000.0,100% -p 5)"
-      # 存储检查返回值
-      return_code=$?
+      if [ ${Proxy} -eq 0 ];then
+        # 执行检查并存储检查结果
+        result="$(${plugins}/check_ping -H${Host} -w 3000.0,80% -c 5000.0,100% -p 5)"
+        # 存储检查返回值
+        return_code=$?
+      elif [ ${Proxy} -eq 1 ];then
+        # 执行检查并存储检查结果
+        result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+        -M "plugins/nagios_plugins/check_ping/-H${Client}_-w3000.0,80%_-c5000.0,100%_-p5${PROXY}")
+        # 存储检查返回值
+        return_code=$?
+      fi
       # 0: Host Up; 1~: Host Down
       HOST_status=${return_code}
       # 分离并存储检查结果中部分信息
@@ -199,10 +209,18 @@ check_host(){
       Response_time=$(echo ${result}|sed 's/.*rta=\(.*\)ms.*/\1/g')
       ;;
     tcp)
-      # 执行检查并存储检查结果
-      result="$(${plugins}/check_tcp -H${Host} -p${Port} -t5)"
-      # 存储检查返回值
-      return_code=$?
+      if [ ${Proxy} -eq 0 ];then
+        # 执行检查并存储检查结果
+        result="$(${plugins}/check_tcp -H${Host} -p${Port} -t5)"
+        # 存储检查返回值
+        return_code=$?
+      elif [ ${Proxy} -eq 1 ];then
+        # 执行检查并存储检查结果
+        result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
+        -M "plugins/nagios_plugins/check_tcp/-H${Client}_-p${Port}${PROXY}")
+        # 存储检查返回值
+        return_code=$?
+      fi
       # 0: Host Up; 1~: Host Down
       HOST_status=${return_code}
       # 分离并存储检查结果中部分信息
