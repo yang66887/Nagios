@@ -886,7 +886,7 @@ system_info(){
 
   # 系统启动时间
   Uptime=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}"\
-    -M "system/uptime${PROXY}"|awk -F= '{print $NF}'|sed 's/[s;]//g')
+  -M "system/uptime${PROXY}"|awk -F= '{print $NF}'|sed 's/[s;]//g')
   return_code=$?
   if [ ${return_code} -eq 0 ];then
     System_status='OK'
