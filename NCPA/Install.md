@@ -64,7 +64,9 @@ sed -i 's/mytoken/生成的Token值/g' /usr/local/ncpa/etc/ncpa.cfg
 ```shell
 curl -o /usr/local/ncpa/plugins/systeminfo 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/systeminfo'
 curl -o /usr/local/ncpa/plugins/nagios_plugins 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/nagios_plugins'
-# For MySQL Server
+```
+>`For MySQL Server`
+```shell
 curl -o /usr/local/ncpa/plugins/check_mysql 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/check_mysql'
 ```
 >`添加执行权限`
