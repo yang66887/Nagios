@@ -3,7 +3,10 @@
 
 set arg=%1
 if %arg%==os (
-    systeminfo.exe|findstr /B OS|findstr "Name: Version:"
+    wmic os get Caption|findstr /V Caption
+)
+if %arg%==kernel (
+    wmic os get Version|findstr /V Version
 )
 if %arg%==cpu (
     wmic cpu get numberoflogicalprocessors|findstr /V Number
