@@ -96,6 +96,10 @@ case ${Node} in
     Warning="${9}"
     Critical="${10}"
     PLUGIN_Args="$(echo _${11}|sed 's/ /_/g')"
+    ;;
+  processes)
+    [ $# -eq 8 ] || error_msg
+    NCPA_Token="${8}"
 esac
 
 # 检测依赖
@@ -149,6 +153,49 @@ elif Str.replace('.', '').isdigit():
   print('0')
 else:
   print('1')
+EOF
+}
+
+# 将json格式的进程列表信息格式化为Influxdb可写入的格式
+py_processes_list_format(){
+  json="$1"
+  /usr/bin/python <<EOF
+# -*- coding: UTF-8 -*-
+
+import os
+import sys
+import json
+import random
+import string
+from sys import version_info
+
+if version_info.major == 2:
+  reload(sys)
+  sys.setdefaultencoding('utf-8')
+
+content = ${json}
+temp_file = ''.join(random.sample(string.ascii_letters + string.digits, 12))
+temp_file = '/usr/local/nagios/var/' + temp_file
+
+for i in range(len(content['processes'])):
+  UserName = content['processes'][i]['username']
+  PID = content['processes'][i]['pid']
+  Name = content['processes'][i]['name']
+  MEM_Percent = content['processes'][i]['mem_percent'][0]
+  CPU_Percent = content['processes'][i]['cpu_percent'][0]
+  Exec = content['processes'][i]['cmd']
+  if not Exec:
+    Exec = "Unknown"
+  with open(temp_file, "a") as file:
+    file.write("Processes_List,Host=${Client},")
+    file.write("i_PID=" + str(PID) + ",")
+    file.write("j_UserName=" + UserName.replace(" ", "_") + ",")
+    file.write("k_Name=" + Name.replace(" ", "_") + " ")
+    file.write("l_CPU_Percent=" + str(CPU_Percent) + ",")
+    file.write("m_MEM_Percent=" + str(MEM_Percent) + ",")
+    file.write("n_Exec=\"" + Exec.replace(" ", "_") + "\"\n")
+
+print(temp_file)
 EOF
 }
 
@@ -919,6 +966,35 @@ o_Processes_Total=${Processes_Total}" \
   exit ${return_code}
 }
 
+check_processes(){
+  # 执行检查并存储检查结果
+  result=$(${ncpa} -H ${Host} -P ${Port} -t "${NCPA_Token}" -M "processes${PROXY}" -l)
+
+  # 存储检查返回值
+  return_code=$?
+
+  # 根据检查返回值判断是否将检查结果写入Influxdb
+  if [ ${return_code} -eq 0 ];then
+    # 格式化检查结果并存储到临时文件
+    result_file="$(py_processes_list_format "${result}")"
+    # 重新定义输出信息
+    result='OK.'
+    # 将检查结果写入 Influxdb
+    curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata" --data-binary @${result_file} &>/dev/null
+    # 清理临时文件
+    rm -f ${result_file}
+  else
+    # 重新定义输出信息
+    result='ERROR.'
+  fi
+
+  # 输出检查结果
+  echo ${result}
+
+  # 退出脚本
+  exit ${return_code}
+}
+
 # 执行检查
 case ${Node} in
   host)
@@ -956,4 +1032,7 @@ case ${Node} in
     ;;
   mysql_health)
     check_mysql_health
+    ;;
+  processes)
+    check_processes
 esac
