@@ -35,3 +35,7 @@
 ![image](./IMG/Grafana_4.png)
 ![image](./IMG/Grafana_5.png)
 ![image](./IMG/Grafana_6.png)
+
+#### 新增进程列表采集与展示
+![image](./IMG/Grafana_7.png)
+![image](./IMG/Grafana_8.png)
