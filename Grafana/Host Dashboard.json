@@ -7162,8 +7162,8 @@
     "list": [
       {
         "current": {
-          "text": "192.168.1.15",
-          "value": "192.168.1.15"
+          "text": "192.168.1.1",
+          "value": "192.168.1.1"
         },
         "datasource": {
           "type": "influxdb"
@@ -7246,8 +7246,8 @@
       },
       {
         "current": {
-          "text": "应城人民医院",
-          "value": "应城人民医院"
+          "text": "xx数据",
+          "value": "xx数据"
         },
         "datasource": {
           "type": "influxdb"
