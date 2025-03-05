@@ -189,11 +189,17 @@ for i in range(len(content['processes'])):
   with open(temp_file, "a") as file:
     file.write("Processes_List,Host=${Client},")
     file.write("i_PID=" + str(PID) + ",")
-    file.write("j_UserName=" + UserName.replace(" ", "_") + ",")
-    file.write("k_Name=" + Name.replace(" ", "_") + " ")
+    if j_UserName.find(" "):
+      file.write("j_UserName=\"" + UserName + "\",")
+    else:
+      file.write("j_UserName=" + UserName + ",")
+    if k_Name.find(" "):
+      file.write("k_Name=\"" + Name + "\" ")
+    else:
+      file.write("k_Name=" + Name + " ")
     file.write("l_CPU_Percent=" + str(CPU_Percent) + ",")
     file.write("m_MEM_Percent=" + str(MEM_Percent) + ",")
-    file.write("n_Exec=\"" + Exec.replace(" ", "_") + "\"\n")
+    file.write("n_Exec=\"" + Exec + "\"\n")
 
 print(temp_file)
 EOF
