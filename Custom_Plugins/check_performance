@@ -175,7 +175,7 @@ if version_info.major == 2:
 
 content = ${json}
 temp_file = ''.join(random.sample(string.ascii_letters + string.digits, 12))
-temp_file = '/usr/local/nagios/var/' + temp_file
+temp_file = '/usr/local/nagios/var/temp/' + temp_file
 
 for i in range(len(content['processes'])):
   UserName = content['processes'][i]['username']
@@ -186,6 +186,8 @@ for i in range(len(content['processes'])):
   Exec = content['processes'][i]['cmd']
   if not Exec:
     Exec = "Unknown"
+  if UserName.isdigit():
+    UserName = 'UID_' + UserName
   with open(temp_file, "a") as file:
     file.write("Processes_List,Host=${Client},")
     file.write("i_PID=" + str(PID) + ",")
