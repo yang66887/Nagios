@@ -59,6 +59,12 @@ echo "nagios:$(openssl passwd -salt 'xxxxXXXX' -apr1 'Password@abc123')" >/usr/l
 ```shell
 sed -i 's/nagiosadmin/nagios/g' /usr/local/nagios/etc/cgi.cfg
 ```
+>`创建临时文件存储目录`
+>`用于存储采集进程列表时产生的临时文件`
+```shell
+mkdir /usr/local/nagios/var/temp
+chown nagios:nagios /usr/local/nagios/var/temp
+```
 
 ### 启动
 ```shell
