@@ -190,12 +190,13 @@ for i in range(len(content['processes'])):
     UserName = 'UID_' + UserName
   with open(temp_file, "a") as file:
     file.write("Processes_List,Host=${Client},")
-    file.write("i_PID=" + str(PID) + ",")
+    file.write("i_Num=" + str(i + 1) + ",")
     file.write("j_UserName=" + UserName.replace(" ", "_") + ",")
-    file.write("k_Name=" + Name.replace(" ", "_") + " ")
-    file.write("l_CPU_Percent=" + str(CPU_Percent) + ",")
-    file.write("m_MEM_Percent=" + str(MEM_Percent) + ",")
-    file.write("n_Exec=\"" + Exec + "\"\n")
+    file.write("k_ProcessName=" + Name.replace(" ", "_") + " ")
+    file.write("l_PID=" + str(PID) + ",")
+    file.write("m_CPU_Percent=" + str(CPU_Percent) + ",")
+    file.write("n_MEM_Percent=" + str(MEM_Percent) + ",")
+    file.write("o_Exec=\"" + Exec + "\"\n")
 
 print(temp_file)
 EOF
