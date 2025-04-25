@@ -123,11 +123,8 @@ C:\Program Files\Nagios\NCPA\plugins\systeminfo.bat
       return 403;
     }
   
-    location /api/ {
-      set $NCPA_Server 'localhost';
-      if ($uri ~* '^/api.*/(\d*?\.\d*?\.\d*?\.\d*?)/$') {
-        set $NCPA_Server $1;
-      }
+    location ~* ^/api.*/(\d*?\.\d*?\.\d*?\.\d*?)/$ {
+      set $NCPA_Server $1;
       rewrite ^(/api.*)/\d*?\.\d*?\.\d*?\.\d*?/$ $1/ break;
       proxy_pass https://$NCPA_Server:5693;
     }
