@@ -3548,10 +3548,10 @@
                   "type": "tag"
                 }
               ],
-              "measurement": "Processes_List",
+              "measurement": "metric",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT \"l_PID\" as \"PID\",\"m_CPU_Percent\" as \"CPU\",\"n_MEM_Percent\" as \"内存\",\"o_Exec\" as \"命令行\" FROM Processes_List where (\"Host\" =~ /^$Host$/) AND time > now() - 60s GROUP BY \"Host\"::tag,\"k_ProcessName\"::tag",
+              "query": "SELECT \"l_PID\" as \"PID\",\"m_CPU_Percent\" as \"CPU\",\"n_MEM_Percent\" as \"内存\",\"o_Exec\" as \"命令行\" FROM metric where (\"Host\" =~ /^$Host$/) AND time > now() - 60s GROUP BY \"Host\"::tag,\"k_ProcessName\"::tag",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -3894,10 +3894,10 @@
                   "type": "tag"
                 }
               ],
-              "measurement": "Processes_List",
+              "measurement": "metric",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT \"l_PID\" as \"PID\",\"m_CPU_Percent\" as \"CPU\",\"n_MEM_Percent\" as \"内存\",\"o_Exec\" as \"命令行\" FROM Processes_List where (\"Host\" =~ /^$Host$/) AND $timeFilter GROUP BY \"Host\"::tag,\"k_ProcessName\"::tag",
+              "query": "SELECT \"l_PID\" as \"PID\",\"m_CPU_Percent\" as \"CPU\",\"n_MEM_Percent\" as \"内存\",\"o_Exec\" as \"命令行\" FROM metric where (\"Host\" =~ /^$Host$/) AND $timeFilter GROUP BY \"Host\"::tag,\"k_ProcessName\"::tag",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
