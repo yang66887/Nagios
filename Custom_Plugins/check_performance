@@ -189,7 +189,7 @@ for i in range(len(content['processes'])):
   if UserName.isdigit():
     UserName = 'UID_' + UserName
   with open(temp_file, "a") as file:
-    file.write("Processes_List,Host=${Client},")
+    file.write("metric,Host=${Client},")
     file.write("i_Num=" + str(i + 1) + ",")
     file.write("j_UserName=" + UserName.replace(" ", "_") + ",")
     file.write("k_ProcessName=" + Name.replace(" ", "_") + " ")
@@ -983,7 +983,7 @@ check_processes(){
     # 重新定义输出信息
     result='OK.'
     # 将检查结果写入 Influxdb
-    curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=nagios_perfdata" --data-binary @${result_file} &>/dev/null
+    curl -s -u "${Influx_Auth}" -XPOST "http://${Influx_URL}/write?db=processes_list" --data-binary @${result_file} &>/dev/null
     # 清理临时文件
     rm -f ${result_file}
   else
