@@ -96,11 +96,6 @@ influx -precision rfc3339 -username UserName -password 'Password@123'
 ```shell
 create database nagios_perfdata with duration 180d
 ```
->`创建进程列表数据库`
->`数据留存策略：30天`
-```shell
-create database processes_list with duration 30d
-```
 >`退出InfluxDB`
 ```shell
 exit
