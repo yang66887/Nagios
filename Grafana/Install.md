@@ -63,8 +63,7 @@ systemctl enable --now grafana-server
 >`默认账号密码：admin:admin`
 
 >`添加数据源`
->`数据源1：database_name=nagios_perfdata`
->`数据源2：database_name=processes_list`
+>`数据源：database_name=nagios_perfdata`
 ![image](../IMG/Data_Source_1.png)
 ![image](../IMG/Data_Source_2.png)
 ![image](../IMG/Data_Source_3.png)
