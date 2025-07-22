@@ -48,17 +48,27 @@ cd nagios-plugins-2.4.12
 ```
 
 ### 安装NCPA检查插件 - For Nagios Server
->`下载插件压缩包`
+###### ***官方原版插件为Python版本，当检查指标数量较多时，每次检查都需要加载一次Python解释器，导致CPU消耗急剧增加***
+>`下载NCPA插件源码 - C语言版本`
 ```shell
-curl -o check_ncpa.tar.gz 'https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz'
+curl -o check_ncpa.c 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/NCPA/check.c'
 ```
->`解压并拷贝到Nagios插件目录`
+>`安装编译依赖 - For Ubuntu/Debian`
 ```shell
-tar xf check_ncpa.tar.gz
-mv check_ncpa.py /usr/local/nagios/libexec/check_ncpa
+apt update
+apt install -y libcurl4-openssl-dev libjansson-dev gcc
 ```
->`修改插件权限`
+>`安装编译依赖 - For CentOS/RHEL`
 ```shell
+yum install -y libcurl-devel jansson-devel gcc
+```
+>`编译check_ncpa插件`
+```shell
+gcc -o check_ncpa check_ncpa.c -lcurl -ljansson
+```
+>`安装check_ncpa插件`
+```shell
+cp check_ncpa /usr/local/nagios/libexec/
 chown nagios:nagios /usr/local/nagios/libexec/check_ncpa
 chmod 755 /usr/local/nagios/libexec/check_ncpa
 ```
