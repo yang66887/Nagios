@@ -495,18 +495,18 @@ int process_json(Options *opts, json_t *root, char **output) {
             // 处理旧版本NCPA的兼容性问题
             if (json_is_integer(stdout_json) && !json_is_integer(returncode_json)) {
                 // 交换stdout和returncode
-                int tmp = json_integer_value(stdout_json);
+                json_int_t tmp = json_integer_value(stdout_json);
                 if (json_is_string(returncode_json)) {
                     stdout_str = json_string_value(returncode_json);
                 } else {
                     stdout_str = "UNKNOWN: Invalid response format";
                 }
-                returncode = tmp;
+                returncode = (int)tmp;
             } else {
                 if (json_is_string(stdout_json)) {
                     stdout_str = json_string_value(stdout_json);
                 } else if (json_is_integer(stdout_json)) {
-                    // 处理数值型输出
+                    // 处理数值型输出 - 使用 %lld 格式
                     allocated_stdout = malloc(64);
                     if (allocated_stdout) {
                         snprintf(allocated_stdout, 64, "%lld", json_integer_value(stdout_json));
@@ -525,7 +525,7 @@ int process_json(Options *opts, json_t *root, char **output) {
                     }
                 }
                 if (json_is_integer(returncode_json)) {
-                    returncode = json_integer_value(returncode_json);
+                    returncode = (int)json_integer_value(returncode_json);
                 }
             }
         }
