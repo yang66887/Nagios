@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设备状态监控</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+      min-height: 100vh;
+      padding: 7.5px; /* 减少50% */
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 15px); /* 减少50% */
+    }
+    
+    .section {
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+    
+    .section:last-child {
+      border-bottom: none;
+    }
+    
+    /* 第一版面优化 */
+    .section-1 {
+      padding: 12px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 120px;
+      justify-content: center;
+    }
+    
+    .logo-container {
+      margin-bottom: 6px;
+    }
+    
+    .logo {
+      width: 55px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .title-container {
+      text-align: center;
+      width: 100%;
+    }
+    
+    .title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .time {
+      font-size: 0.8rem;
+      color: #bdc3c7;
+      font-weight: 300;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* 第二版面优化 */
+    .section-2 {
+      padding: 12px 15px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    
+    .status-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      padding: 8px 0;
+    }
+    
+    .status-card {
+      background: rgba(30, 40, 60, 0.7);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .status-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .status-item {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+    
+    .status-item.inline {
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-item.info-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    
+    .label {
+      min-width: 100px;
+      color: #95a5a6;
+      font-weight: 500;
+    }
+    
+    .value {
+      flex: 1;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .info-value {
+      width: 100%;
+      font-weight: 600;
+      word-wrap: break-word;
+      line-height: 1.6;
+    }
+    
+    /* 第三版面优化 */
+    .section-3 {
+      padding: 12px 15px;
+      flex-shrink: 0;
+      height: 130px;
+      font-size: 0.64rem;
+    }
+    
+    .info-title {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .info-content {
+      font-size: 0.7rem;
+      line-height: 1.8;
+      padding: 12px;
+      background: rgba(30, 40, 60, 0.6);
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      height: 70px;
+      overflow-y: auto;
+    }
+    
+    .params-display {
+      margin-top: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.58rem;
+      overflow-x: auto;
+    }
+    
+    /* 状态颜色 */
+    .ok {
+      color: #2ecc71;
+    }
+    
+    .warning {
+      color: #f39c12;
+    }
+    
+    .critical {
+      color: #e74c3c;
+    }
+    
+    .unknown {
+      color: #e67e22;
+    }
+    
+    .status-icon {
+      font-size: 1.3rem;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 18px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    .ok-bg {
+      background: rgba(46, 204, 113, 0.15);
+    }
+    
+    .warning-bg {
+      background: rgba(243, 156, 18, 0.15);
+    }
+    
+    .critical-bg {
+      background: rgba(231, 76, 60, 0.15);
+    }
+    
+    .unknown-bg {
+      background: rgba(230, 126, 34, 0.15);
+    }
+    
+    /* 动画效果 */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    /* 状态指示器 */
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      body {
+        padding: 7.5px 10px;
+      }
+      
+      .container {
+        height: auto;
+        max-height: calc(100vh - 15px);
+      }
+      
+      .section-1 {
+        height: 110px;
+      }
+      
+      .section-3 {
+        height: 120px;
+        font-size: 0.55rem;
+      }
+      
+      .logo {
+        width: 50px;
+        height: 50px;
+        font-size: 1.1rem;
+      }
+      
+      .title {
+        font-size: 1.1rem;
+        gap: 5px;
+      }
+      
+      .time {
+        font-size: 0.7rem;
+      }
+      
+      .info-title {
+        font-size: 0.8rem;
+      }
+      
+      .info-content {
+        font-size: 0.65rem;
+        height: 60px;
+      }
+      
+      .params-display {
+        font-size: 0.5rem;
+      }
+      
+      .status-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .label {
+        min-width: 80px;
+      }
+      
+      .status-item {
+        font-size: 0.9rem;
+      }
+      
+      .status-badge {
+        font-size: 0.9rem;
+      }
+      
+      .section-1 {
+        height: 100px;
+      }
+      
+      .logo {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <!-- 第一版面 -->
+      <div class="section section-1">
+        <div class="logo-container">
+          <div class="logo" :style="{ background: logoBackground }">Nagios</div>
+        </div>
+        <div class="title-container">
+          <h1 class="title">
+            <i :class="statusIconClass" :style="{ color: statusIconColor }" class="status-icon pulse"></i>
+            <span :class="statusColorClass">{{ title }}</span>
+          </h1>
+          <div class="time">{{ time }}</div>
+        </div>
+      </div>
+      
+      <!-- 第二版面 -->
+      <div class="section section-2">
+        <div class="status-container">
+          <div class="status-card">
+            <div class="status-item inline">
+              <div class="label">项目名称：</div>
+              <div class="value">{{ group }}</div>
+            </div>
+            <div class="status-item inline">
+              <div class="label">设备名称：</div>
+              <div class="value">{{ device }}</div>
+            </div>
+            <div class="status-item inline" v-if="service">
+              <div class="label">服务名称：</div>
+              <div class="value">{{ service }}</div>
+            </div>
+            <div class="status-item inline">
+              <div class="label">设备地址：</div>
+              <div class="value">{{ ip }}</div>
+            </div>
+          </div>
+          
+          <div class="status-card">
+            <div class="status-item inline">
+              <div class="label">当前状态：</div>
+              <div class="value">
+                <span :class="['status-badge', statusColorClass + '-bg', statusColorClass]">
+                  <i :class="statusIconClass" :style="{ color: statusIconColor }" class="status-icon"></i>
+                  {{ state }}
+                </span>
+              </div>
+            </div>
+            <div class="status-item info-wrap">
+              <div class="label">附加信息：</div>
+              <div :class="['info-value', statusColorClass]">{{ formattedInfo }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 第三版面 -->
+      <div class="section section-3">
+        <div class="info-container">
+          <div class="info-title">
+            <i class="fas fa-info-circle"></i>
+            <span>系统提示</span>
+          </div>
+          <div class="info-content" :class="statusColorClass">
+            {{ statusMessage }}
+          </div>
+          <!-- 注释掉URL参数显示部分 -->
+          <!--
+          <div class="params-display">
+            当前URL参数：<br>
+            title: {{ title }}<br>
+            time: {{ time }}<br>
+            group: {{ group }}<br>
+            ip: {{ ip }}<br>
+            device: {{ device }}<br>
+            service: {{ service }}<br>
+            state: {{ state }}<br>
+            info: {{ info }}
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        title: '',
+        time: '',
+        group: '',
+        ip: '',
+        device: '',
+        state: '',
+        info: '',
+        service: ''
+      },
+      computed: {
+        statusColorClass() {
+          return this.state.toLowerCase();
+        },
+        statusIconColor() {
+          switch (this.state.toLowerCase()) {
+            case 'ok': return '#2ecc71';
+            case 'warning': return '#f39c12';
+            case 'critical': return '#e74c3c';
+            case 'unknown': return '#e67e22';
+            default: return '#3498db';
+          }
+        },
+        statusIconClass() {
+          switch (this.state.toLowerCase()) {
+            case 'ok': return 'fas fa-check-circle';
+            case 'warning': return 'fas fa-exclamation-triangle';
+            case 'critical': return 'fas fa-times-circle';
+            case 'unknown': return 'fas fa-question-circle';
+            default: return 'fas fa-question-circle';
+          }
+        },
+        statusMessage() {
+          switch (this.state.toLowerCase()) {
+            case 'ok':
+              return '指标数据均在预期范围内，请继续保持当前配置并定期检查系统日志。';
+            case 'warning':
+              return '检测到潜在问题，需要关注！建议检查相关设备日志并执行预防性维护！';
+            case 'critical':
+              return '检测到严重故障！请立即采取行动检查设备并排除故障，以免造成业务中断！';
+            case 'unknown':
+              return '无法获取有效数据，请检查服务器连接状态！';
+            default:
+              return '系统状态未知，请检查监控系统配置和连接状态。';
+          }
+        },
+        formattedInfo() {
+          return this.formatValue(this.info);
+        },
+        logoBackground() {
+          switch (this.state.toLowerCase()) {
+            case 'ok': return 'linear-gradient(45deg, #2ecc71, #1abc9c)';
+            case 'warning': return 'linear-gradient(45deg, #f39c12, #e67e22)';
+            case 'critical': return 'linear-gradient(45deg, #e74c3c, #c0392b)';
+            case 'unknown': return 'linear-gradient(45deg, #e67e22, #d35400)';
+            default: return 'linear-gradient(45deg, #3498db, #2ecc71)';
+          }
+        }
+      },
+      mounted() {
+        this.parseUrlParams();
+        this.updateTime();
+      },
+      methods: {
+        parseUrlParams() {
+          const urlParams = new URLSearchParams(window.location.search);
+          
+          if (urlParams.has('title')) this.title = this.replaceKeywords(urlParams.get('title'));
+          if (urlParams.has('time')) this.time = this.replaceKeywords(urlParams.get('time'));
+          if (urlParams.has('group')) this.group = this.replaceKeywords(urlParams.get('group'));
+          if (urlParams.has('ip')) this.ip = this.replaceKeywords(urlParams.get('ip'));
+          if (urlParams.has('device')) this.device = this.replaceKeywords(urlParams.get('device'));
+          if (urlParams.has('state')) this.state = this.replaceKeywords(urlParams.get('state')).toLowerCase();
+          if (urlParams.has('info')) this.info = this.replaceKeywords(urlParams.get('info'));
+          if (urlParams.has('service')) this.service = this.replaceKeywords(urlParams.get('service'));
+          
+          if (!['ok', 'warning', 'critical', 'unknown'].includes(this.state)) {
+            this.state = 'unknown';
+          }
+        },
+        replaceKeywords(str) {
+          if (!str) return '';
+          const replacements = { '井号': '#', '百分号': '%' };
+          return str.replace(/井号|百分号/g, match => replacements[match]);
+        },
+        formatValue(value) {
+          if (typeof value !== 'string') return value;
+          
+          // 单位转换（无需匹配<>）
+          return value.replace(/(\d+(?:\.\d+)?)\s+(KiB|MiB|GiB|TiB)(\/s)?/g, (match, number, unit, perSecond) => {
+            const num = parseFloat(number);
+            const converted = this.convertUnit(num, unit);
+            return `${converted.value.toFixed(2)} ${converted.unit}${perSecond || ''}`;
+          });
+        },
+        convertUnit(value, unit) {
+          const units = ['KiB', 'MiB', 'GiB', 'TiB'];
+          let currentUnitIndex = units.indexOf(unit);
+          
+          if (currentUnitIndex === -1) {
+            return { value, unit };
+          }
+          
+          let convertedValue = value;
+          
+          while (convertedValue >= 1024 && currentUnitIndex < units.length - 1) {
+            convertedValue /= 1024;
+            currentUnitIndex++;
+          }
+          
+          return {
+            value: convertedValue,
+            unit: units[currentUnitIndex]
+          };
+        }
+      }
+    });
+  </script>
+</body>
+</html>
