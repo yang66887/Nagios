@@ -61,41 +61,51 @@ mysql-common_8.0.40-1ubuntu22.04_amd64.deb
 #### Nagios Plugins、MySQL Client、check_ncpa与InfluxDB集成脚本
 >`下载集成脚本`
 ```shell
-curl -o /usr/local/nagios/libexec/check_performance https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/check_performance
+curl -o /data/nagios/libexec/check_performance https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/check_performance
 ```
 >`下载SQL语句记录文件`
 >`用于监控MySQL定制化数据`
 >`语句名必须以 SQL_ 开头`
 ```shell
-curl -o /usr/local/nagios/etc/data_sql.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/data_sql.list'
+curl -o /data/nagios/etc/data_sql.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/data_sql.list'
+```
+>`下载进程列表写入插件`
+```shell
+mkdir /data/nagios/var/cache
+curl -o /data/nagios/var/cache/.influx_write.py 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/influx_write.py'
+cat >>/etc/crontab <<EOF
+# Nagios进程列表定时写入Influxdb
+*/5 * * * * root [ $(ps -ef|grep influx_write.py|grep -v grep|wc -l) -eq 0 ] && /usr/bin/python /data/nagios/var/cache/.influx_write.py &>/dev/null
+EOF
 ```
 >`修改权限`
 ```shell
-chown nagios:nagios /usr/local/nagios/libexec/check_performance
-chmod 755 /usr/local/nagios/libexec/check_performance
+chown nagios:nagios /data/nagios/libexec/check_performance
+chmod 755 /data/nagios/libexec/check_performance
+chmod 755 /data/nagios/var/cache/.influx_write.py
 ```
 
 #### 企业微信告警插件
 >`单一成员告警插件`
 ```shell
-curl -o /usr/local/nagios/libexec/send_wechat 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/send_wechat'
+curl -o /data/nagios/libexec/send_wechat 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/send_wechat'
 ```
 >`群组告警插件`
 ```shell
-curl -o /usr/local/nagios/libexec/send_wechat_group 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/send_wechat_group'
+curl -o /data/nagios/libexec/send_wechat_group 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/send_wechat_group'
 ```
 >`企业微信成员通讯录`
 ```shell
-curl -o /usr/local/nagios/etc/wechat_user.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/wechat_user.list'
+curl -o /data/nagios/etc/wechat_user.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/wechat_user.list'
 ```
 >`企业微信群组通讯录`
 ```shell
-curl -o /usr/local/nagios/etc/wechat_group.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/wechat_group.list'
+curl -o /data/nagios/etc/wechat_group.list 'https://raw.githubusercontent.com/yang66887/Nagios/refs/heads/main/Custom_Plugins/wechat_group.list'
 ```
 >`修改权限`
 ```shell
-chown nagios:nagios /usr/local/nagios/libexec/send_wechat*
-chmod 755 /usr/local/nagios/libexec/send_wechat*
+chown nagios:nagios /data/nagios/libexec/send_wechat*
+chmod 755 /data/nagios/libexec/send_wechat*
 ```
 >`告警详情页`
 >`非必需`
