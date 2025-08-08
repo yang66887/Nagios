@@ -86,15 +86,15 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     return realsize;
 }
 
-// 构建URL - 对需要转义的字符进行编码
-char *build_url(Options *opts) {
+// 构建URL - 对需要转义的字符进行编码，支持动态协议参数
+char *build_url(Options *opts, const char *protocol) {
     CURL *curl = curl_easy_init();
     if (!curl) {
         return NULL;
     }
     
-    // 基础URL
-    size_t base_len = snprintf(NULL, 0, "https://%s:%d/api", opts->hostname, opts->port);
+    // 基础URL - 使用传入的协议(https或http)
+    size_t base_len = snprintf(NULL, 0, "%s://%s:%d/api", protocol, opts->hostname, opts->port);
     
     // 计算总长度
     size_t total_len = base_len + 1; // +1 for null terminator
@@ -144,7 +144,7 @@ char *build_url(Options *opts) {
     
     // 构建基础URL
     char *p = full_url;
-    p += snprintf(p, total_len, "https://%s:%d/api", opts->hostname, opts->port);
+    p += snprintf(p, total_len, "%s://%s:%d/api", protocol, opts->hostname, opts->port);
     
     // 添加转义后的metric部分
     if (escaped_metric) {
@@ -182,7 +182,7 @@ char *build_url(Options *opts) {
     return full_url;
 }
 
-// 构建查询字符串 - 修复内存错误
+// 构建查询字符串
 char *build_query_string(Options *opts) {
     CURL *curl = curl_easy_init();
     if (!curl) {
@@ -385,80 +385,122 @@ char *build_query_string(Options *opts) {
     return query;
 }
 
-// 执行HTTP请求
+// 执行HTTP请求 - 支持SSL失败后重试HTTP
 CURLcode perform_request(Options *opts, struct MemoryStruct *chunk, long *http_code) {
-    CURL *curl;
     CURLcode res = CURLE_OK;
+    *http_code = 0;
     
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    curl = curl_easy_init();
     
-    if (!curl) {
-        return CURLE_FAILED_INIT;
-    }
-    
-    // 构建基础URL
-    char *base_url = build_url(opts);
-    if (!base_url) {
-        curl_easy_cleanup(curl);
-        return CURLE_OUT_OF_MEMORY;
-    }
-    
-    // 构建查询字符串
+    // 构建查询字符串（与协议无关，可复用）
     char *query = build_query_string(opts);
-    
-    // 合并为完整URL
-    char *full_url = NULL;
-    if (query && *query) {
-        full_url = malloc(strlen(base_url) + strlen(query) + 2);
-        if (full_url) {
-            sprintf(full_url, "%s?%s", base_url, query);
-        }
-    } else {
-        full_url = strdup(base_url);
-    }
-    
-    if (!full_url) {
-        free(base_url);
-        if (query) free(query);
-        curl_easy_cleanup(curl);
+    if (!query) {
+        curl_global_cleanup();
         return CURLE_OUT_OF_MEMORY;
     }
     
-    if (opts->verbose) {
-        fprintf(stderr, "Connecting to: %s\n", full_url);
+    // 尝试的协议：先HTTPS，失败且是SSL错误则尝试HTTP
+    const char *protocols[] = {"https", "http"};
+    int max_attempts = 2;
+    int attempt;
+    
+    for (attempt = 0; attempt < max_attempts; attempt++) {
+        const char *protocol = protocols[attempt];
+        CURL *curl = curl_easy_init();
+        if (!curl) {
+            res = CURLE_FAILED_INIT;
+            break;
+        }
+        
+        // 构建基础URL
+        char *base_url = build_url(opts, protocol);
+        if (!base_url) {
+            curl_easy_cleanup(curl);
+            res = CURLE_OUT_OF_MEMORY;
+            break;
+        }
+        
+        // 合并为完整URL
+        char *full_url = NULL;
+        if (query && *query) {
+            full_url = malloc(strlen(base_url) + strlen(query) + 2);
+            if (full_url) {
+                snprintf(full_url, strlen(base_url) + strlen(query) + 2, "%s?%s", base_url, query);
+            }
+        } else {
+            full_url = strdup(base_url);
+        }
+        
+        if (!full_url) {
+            free(base_url);
+            curl_easy_cleanup(curl);
+            res = CURLE_OUT_OF_MEMORY;
+            break;
+        }
+        
+        if (opts->verbose) {
+            fprintf(stderr, "Connecting to: %s\n", full_url);
+        }
+        
+        // 设置URL
+        curl_easy_setopt(curl, CURLOPT_URL, full_url);
+        
+        // 设置回调函数
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)chunk);
+        
+        // 设置超时
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout);
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, opts->timeout);
+        
+        // 设置User-Agent
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
+        
+        // SSL验证逻辑 - 仅HTTPS协议需要考虑
+        if (strcmp(protocol, "https") == 0) {
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, opts->secure ? 1L : 0L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, opts->secure ? 2L : 0L);
+        } else {
+            // HTTP协议禁用SSL验证
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        }
+        
+        // 执行请求
+        res = curl_easy_perform(curl);
+        
+        // 获取HTTP状态码
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, http_code);
+        
+        // 清理当前尝试的资源
+        curl_easy_cleanup(curl);
+        free(base_url);
+        free(full_url);
+        
+        // 检查结果决定是否继续重试
+        if (res == CURLE_OK) {
+            // 请求成功，无需继续尝试
+            break;
+        } else if (attempt == 0 && res != CURLE_SSL_CONNECT_ERROR) {
+            // 首次尝试失败且不是SSL连接错误，无需重试
+            break;
+        } else if (attempt == 0) {
+            // 首次是SSL连接错误，准备重试HTTP
+            if (opts->verbose) {
+                fprintf(stderr, "SSL connection failed (%s), retrying with HTTP...\n", 
+                        curl_easy_strerror(res));
+            }
+            // 重置内存缓冲区，准备第二次请求
+            free(chunk->memory);
+            chunk->memory = NULL;
+            chunk->size = 0;
+        }
+        // 第二次尝试失败则退出循环，返回最后结果
     }
     
-    // 设置URL
-    curl_easy_setopt(curl, CURLOPT_URL, full_url);
-    
-    // 设置回调函数
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)chunk);
-    
-    // 设置超时
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout);
-    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, opts->timeout);
-    
-    // 设置User-Agent
-    curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
-    
-    // 修复：SSL验证逻辑 - 匹配Python版本的行为
-    // Python版本默认不验证SSL，除非使用-s选项
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, opts->secure ? 1L : 0L);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, opts->secure ? 2L : 0L);
-    
-    // 执行请求
-    res = curl_easy_perform(curl);
-    
-    // 获取HTTP状态码
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, http_code);
-    
-    // 清理
-    curl_easy_cleanup(curl);
-    free(base_url);
+    // 清理查询字符串
     if (query) free(query);
-    free(full_url);
+    curl_global_cleanup();
     
     return res;
 }
@@ -675,7 +717,6 @@ cleanup:
     // 清理资源
     if (chunk.memory) free(chunk.memory);
     if (root) json_decref(root);
-    curl_global_cleanup();
     
     return exit_code;
 }
