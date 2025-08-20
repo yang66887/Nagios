@@ -118,7 +118,9 @@ C:\Program Files\Nagios\NCPA\plugins\systeminfo.bat
     ssl_protocols             TLSv1.2 TLSv1.3;
     ssl_ciphers               HIGH:!RC4:!MD5:!aNULL:!eNULL:!NULL:!DH:!EDH:!EXP:+MEDIUM;
     ssl_prefer_server_ciphers on;
-  
+
+    access_log off;
+
     location / {
       return 403;
     }
@@ -130,3 +132,4 @@ C:\Program Files\Nagios\NCPA\plugins\systeminfo.bat
     }
   }
 ```
+
