@@ -19,6 +19,7 @@ def influx_format(file_content):
     try:
         data = json.loads(file_content)
         Host = data['host']
+        Host_Name = data['host_name']
         Measurement = 'Processes_List'
         PROCESSES_LIST = data['processes']
         Timestamp = data['timestamp']
@@ -41,7 +42,7 @@ def influx_format(file_content):
                 current_timestamp = Timestamp + i
                 
                 line = (
-                    f"{Measurement},Host={Host} "
+                    f"{Measurement},Host_Name={Host_Name},Host={Host} "
                     f'i_UserName="{UserName}",'
                     f'j_ProcessName="{Name}",'
                     f"k_PID={PID},"
