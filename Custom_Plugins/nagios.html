@@ -17,7 +17,7 @@
     body {
       background: linear-gradient(135deg, #1a2a6c, #2c3e50);
       min-height: 100vh;
-      padding: 7.5px; /* 减少50% */
+      padding: 7.5px;
       color: #f0f0f0;
       display: flex;
       justify-content: center;
@@ -35,7 +35,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 15px); /* 减少50% */
+      height: calc(100vh - 15px);
     }
     
     .section {
@@ -164,10 +164,13 @@
       text-overflow: ellipsis;
     }
     
+    /* 修复附加信息换行问题 */
     .info-value {
       width: 100%;
       font-weight: 600;
       word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
       line-height: 1.6;
     }
     
@@ -197,15 +200,9 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       height: 70px;
       overflow-y: auto;
-    }
-    
-    .params-display {
-      margin-top: 8px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 0.58rem;
-      overflow-x: auto;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
     }
     
     /* 状态颜色 */
@@ -321,10 +318,6 @@
         height: 60px;
       }
       
-      .params-display {
-        font-size: 0.5rem;
-      }
-      
       .status-container {
         grid-template-columns: 1fr;
       }
@@ -348,10 +341,136 @@
       }
       
       .logo {
-        width: 45px;
-        height: 45px;
+        width: 40px;
+        height: 40px;
         font-size: 1rem;
       }
+    }
+    
+    /* 状态背景动画 */
+    .status-card {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .status-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .status-card.ok::after {
+      background: linear-gradient(90deg, rgba(46, 204, 113, 0.8), rgba(26, 188, 156, 0.8));
+    }
+    
+    .status-card.warning::after {
+      background: linear-gradient(90deg, rgba(243, 156, 18, 0.8), rgba(230, 126, 34, 0.8));
+    }
+    
+    .status-card.critical::after {
+      background: linear-gradient(90deg, rgba(231, 76, 60, 0.8), rgba(192, 57, 43, 0.8));
+    }
+    
+    .status-card.unknown::after {
+      background: linear-gradient(90deg, rgba(230, 126, 34, 0.8), rgba(211, 84, 0, 0.8));
+    }
+    
+    /* 标题动画 */
+    .title span {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .title span::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    
+    .title:hover span::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
+    .ok.title span::after {
+      background: #2ecc71;
+    }
+    
+    .warning.title span::after {
+      background: #f39c12;
+    }
+    
+    .critical.title span::after {
+      background: #e74c3c;
+    }
+    
+    .unknown.title span::after {
+      background: #e67e22;
+    }
+    
+    /* 新添加的滚动条样式 */
+    .info-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .info-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    
+    .info-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+    
+    .info-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+    
+    /* 附加信息区的优化 */
+    .info-value {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 4px;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+    
+    /* 状态卡片顶部颜色指示器 */
+    .status-indicator-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      border-radius: 4px 4px 0 0;
+    }
+    
+    .status-card.ok .status-indicator-bar {
+      background: linear-gradient(90deg, #2ecc71, #1abc9c);
+    }
+    
+    .status-card.warning .status-indicator-bar {
+      background: linear-gradient(90deg, #f39c12, #e67e22);
+    }
+    
+    .status-card.critical .status-indicator-bar {
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+    }
+    
+    .status-card.unknown .status-indicator-bar {
+      background: linear-gradient(90deg, #e67e22, #d35400);
     }
   </style>
 </head>
@@ -375,7 +494,8 @@
       <!-- 第二版面 -->
       <div class="section section-2">
         <div class="status-container">
-          <div class="status-card">
+          <div class="status-card" :class="statusColorClass">
+            <div class="status-indicator-bar"></div>
             <div class="status-item inline">
               <div class="label">项目名称：</div>
               <div class="value">{{ group }}</div>
@@ -394,7 +514,8 @@
             </div>
           </div>
           
-          <div class="status-card">
+          <div class="status-card" :class="statusColorClass">
+            <div class="status-indicator-bar"></div>
             <div class="status-item inline">
               <div class="label">当前状态：</div>
               <div class="value">
@@ -422,20 +543,6 @@
           <div class="info-content" :class="statusColorClass">
             {{ statusMessage }}
           </div>
-          <!-- 注释掉URL参数显示部分 -->
-          <!--
-          <div class="params-display">
-            当前URL参数：<br>
-            title: {{ title }}<br>
-            time: {{ time }}<br>
-            group: {{ group }}<br>
-            ip: {{ ip }}<br>
-            device: {{ device }}<br>
-            service: {{ service }}<br>
-            state: {{ state }}<br>
-            info: {{ info }}
-          </div>
-          -->
         </div>
       </div>
     </div>
@@ -532,7 +639,7 @@
         formatValue(value) {
           if (typeof value !== 'string') return value;
           
-          // 单位转换（无需匹配<>）
+          // 单位转换
           return value.replace(/(\d+(?:\.\d+)?)\s+(KiB|MiB|GiB|TiB)(\/s)?/g, (match, number, unit, perSecond) => {
             const num = parseFloat(number);
             const converted = this.convertUnit(num, unit);
