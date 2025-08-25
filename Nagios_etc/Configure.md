@@ -12,33 +12,20 @@ sed -i 's/^\(#cfg_dir=.*servers\)/cfg_dir=\/usr\/local\/nagios\/etc\/monitor\n\1
 
 ### 写入额外认证信息
 >`以下账号密码与IP地址等信息仅供参考，请自行修改`
-
->`MySQL用户名与密码`
->`grant select on *.*`
->`grant REPLICATION CLIENT on *.*`
 ```shell
-cat >>/usr/local/nagios/etc/resource.cfg <<EOF
+cat >>/usr/local/nagios/etc/check_performance.env <<EOF
+#!/bin/bash
 
-# MySQL
-\$USER2\$='mysql_user'
-\$USER3\$='mysql_password'
-EOF
-```
->`InfluxDB Web Api地址、端口以及用户名和密码`
-```shell
-cat >>/usr/local/nagios/etc/resource.cfg <<EOF
+# InfluxDB Auth
+INFLUX_URL='127.0.0.1:8086'
+INFLUX_AUTH='username:password'
 
-# InfluxDB
-\$USER4\$='192.168.1.180:8086'
-\$USER5\$='influxdb_user:influxdb_password'
-EOF
-```
->`NCPA Token`
-```shell
-cat >>/usr/local/nagios/etc/resource.cfg <<EOF
+# MySQL Auth - grant select,replication client on *.*
+MYSQL_USER='username'
+MYSQL_PASSWORD='password'
 
-# NCPA
-\$USER6\$='ncpa_token'
+# NCPA Auth
+NCPA_TOKEN='mytoken'
 EOF
 ```
 
