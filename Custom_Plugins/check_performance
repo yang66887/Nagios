@@ -4,14 +4,14 @@
 # $USER1$/monitor $_HOSTPROXY$ $_SERVICENODE$ $HOSTADDRESS$ $_HOSTPORT$ $USER4$ $USER5$ $USER6$ $_SERVICEPATH$ $_SERVICEWARNING$ $_SERVICECRITICAL$ $_SERVICEUNIT$
 
 # 插件路径
-NAGIOS_PLUGINS='/data/nagios/libexec'
+NAGIOS_PLUGINS='/usr/local/nagios/libexec'
 CHECK_NCPA="${NAGIOS_PLUGINS}/check_ncpa"
 
 # Influxdb写入日志
-INFLUX_ERROR='/data/nagios/var/influxdb.error'
+INFLUX_ERROR='/usr/local/nagios/var/influxdb.error'
 
 # 加载配置文件
-source /data/nagios/etc/check_performance.env
+source /usr/local/nagios/etc/check_performance.env
 
 # 帮助以及错误信息
 dep_msg(){
@@ -772,7 +772,7 @@ check_mysql_data(){
   case ${SET_PROXY} in
     0)
       # 加载SQL语句定义文件
-      source /data/nagios/etc/data_sql.list || error_msg
+      source /usr/local/nagios/etc/data_sql.list || error_msg
       # 执行查询语句并存储查询结果
       result=$(mysql -h${NCPA_ADDRESS} -P${MYSQL_PORT} -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -D"${MYSQL_DATABASE}" -e "${!MYSQL_SELECT}" 2>/dev/null)
       # 存储返回值
@@ -903,7 +903,7 @@ check_processes(){
   # 根据检查返回值判断是否将检查结果写入Influxdb
   if [ ${return_code} -eq 0 ];then
     # 进入缓存目录
-    cd /data/nagios/var/cache
+    cd /usr/local/nagios/var/cache
     # 检查结果缓存文件
     local BUFFER_FILE=$(date +%s%N)
     #
