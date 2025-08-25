@@ -57,8 +57,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   },
                   {
                     "color": "dark-red",
@@ -85,8 +84,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "dark-green",
-                          "value": null
+                          "color": "dark-green"
                         },
                         {
                           "color": "dark-red",
@@ -157,7 +155,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "Host 状态",
@@ -189,7 +187,7 @@
                 [
                   {
                     "params": [
-                      "k_Host_Status"
+                      "i_Status"
                     ],
                     "type": "field"
                   },
@@ -204,6 +202,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -238,7 +242,7 @@
                 [
                   {
                     "params": [
-                      "m_Response_Time"
+                      "l_Response_Time"
                     ],
                     "type": "field"
                   },
@@ -253,6 +257,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -275,8 +285,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "#299c46",
-                    "value": null
+                    "color": "#299c46"
                   }
                 ]
               },
@@ -288,107 +297,6 @@
             "h": 2,
             "w": 5,
             "x": 2,
-            "y": 1
-          },
-          "id": 109,
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "background",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "/^操作系统版本$/",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "value_and_name",
-            "wideLayout": false
-          },
-          "pluginVersion": "11.3.0+security-01",
-          "targets": [
-            {
-              "alias": "操作系统版本",
-              "datasource": {
-                "type": "influxdb"
-              },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "System_Info",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "logs",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "j_OS_Version"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "Host::tag",
-                  "operator": "=~",
-                  "value": "/^$Host$/"
-                }
-              ]
-            }
-          ],
-          "title": "",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "influxdb"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "fixedColor": "dark-blue",
-                "mode": "fixed"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "#299c46",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "string"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 7,
-            "x": 7,
             "y": 1
           },
           "id": 108,
@@ -407,10 +315,14 @@
               "values": false
             },
             "showPercentChange": false,
+            "text": {
+              "titleSize": 10,
+              "valueSize": 20
+            },
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "内核版本",
@@ -440,7 +352,7 @@
                 [
                   {
                     "params": [
-                      "k_Kernel_Version"
+                      "n_Kernel_Version"
                     ],
                     "type": "field"
                   },
@@ -455,6 +367,122 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                }
+              ]
+            }
+          ],
+          "title": "",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "dark-blue",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#299c46"
+                  }
+                ]
+              },
+              "unit": "string"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 7,
+            "x": 7,
+            "y": 1
+          },
+          "id": 109,
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "horizontal",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/^操作系统版本$/",
+              "values": false
+            },
+            "showPercentChange": false,
+            "text": {
+              "titleSize": 10,
+              "valueSize": 20
+            },
+            "textMode": "value_and_name",
+            "wideLayout": false
+          },
+          "pluginVersion": "12.0.1+security-01",
+          "targets": [
+            {
+              "alias": "操作系统版本",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "System_Info",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "logs",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "m_OS_Version"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -488,8 +516,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   },
                   {
                     "color": "dark-yellow",
@@ -523,17 +550,17 @@
               "calcs": [
                 "lastNotNull"
               ],
-              "fields": "/^上传流量$/",
+              "fields": "/^发送流量$/",
               "values": false
             },
             "showPercentChange": false,
             "textMode": "value_and_name",
             "wideLayout": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
-              "alias": "上传流量",
+              "alias": "发送流量",
               "datasource": {
                 "type": "influxdb"
               },
@@ -562,7 +589,7 @@
                 [
                   {
                     "params": [
-                      "k_Traffic_Current"
+                      "k_Value"
                     ],
                     "type": "field"
                   },
@@ -580,7 +607,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "j_Traffic_Type::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Type::field",
                   "operator": "=",
                   "value": "Bytes_sent"
                 }
@@ -616,8 +649,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   },
                   {
                     "color": "dark-yellow",
@@ -651,17 +683,17 @@
               "calcs": [
                 "lastNotNull"
               ],
-              "fields": "/^下载流量$/",
+              "fields": "/^接收流量$/",
               "values": false
             },
             "showPercentChange": false,
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
-              "alias": "下载流量",
+              "alias": "接收流量",
               "datasource": {
                 "type": "influxdb"
               },
@@ -690,7 +722,7 @@
                 [
                   {
                     "params": [
-                      "k_Traffic_Current"
+                      "k_Value"
                     ],
                     "type": "field"
                   },
@@ -708,7 +740,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "j_Traffic_Type::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Type::field",
                   "operator": "=",
                   "value": "Bytes_recv"
                 }
@@ -746,8 +784,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   },
                   {
                     "color": "dark-yellow",
@@ -778,8 +815,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "dark-green",
-                          "value": null
+                          "color": "dark-green"
                         },
                         {
                           "color": "dark-yellow",
@@ -827,7 +863,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "CPU使用率",
@@ -836,7 +872,7 @@
               },
               "groupBy": [],
               "hide": false,
-              "measurement": "Cpu_Usage",
+              "measurement": "CPU_Usage",
               "orderByTime": "ASC",
               "policy": "default",
               "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
@@ -847,9 +883,13 @@
                 [
                   {
                     "params": [
-                      "j_Cpu_Percent"
+                      "j_Percent"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
                   }
                 ]
               ],
@@ -858,6 +898,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -867,7 +913,7 @@
                 "type": "influxdb"
               },
               "groupBy": [],
-              "measurement": "Cpu_Load",
+              "measurement": "CPU_Load",
               "orderByTime": "ASC",
               "policy": "default",
               "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
@@ -881,6 +927,10 @@
                       "j_Load_1"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
                   }
                 ]
               ],
@@ -889,6 +939,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -899,7 +955,7 @@
               },
               "groupBy": [],
               "hide": false,
-              "measurement": "Cpu_Load",
+              "measurement": "CPU_Load",
               "orderByTime": "ASC",
               "policy": "default",
               "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
@@ -913,6 +969,10 @@
                       "k_Load_5"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
                   }
                 ]
               ],
@@ -921,6 +981,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -931,7 +997,7 @@
               },
               "groupBy": [],
               "hide": false,
-              "measurement": "Cpu_Load",
+              "measurement": "CPU_Load",
               "orderByTime": "ASC",
               "policy": "default",
               "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
@@ -945,6 +1011,10 @@
                       "l_Load_15"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
                   }
                 ]
               ],
@@ -953,6 +1023,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -975,8 +1051,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -988,7 +1063,7 @@
             "h": 4,
             "w": 3,
             "x": 2,
-            "y": 169
+            "y": 282
           },
           "id": 27,
           "maxDataPoints": 100,
@@ -1009,7 +1084,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "启动时间",
@@ -1039,7 +1114,7 @@
                 [
                   {
                     "params": [
-                      "l_Uptime"
+                      "j_Uptime"
                     ],
                     "type": "field"
                   },
@@ -1054,6 +1129,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -1086,8 +1167,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1103,7 +1183,7 @@
             "h": 2,
             "w": 2,
             "x": 5,
-            "y": 169
+            "y": 282
           },
           "id": 80,
           "maxDataPoints": 100,
@@ -1124,7 +1204,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "CPU核心数",
@@ -1156,7 +1236,7 @@
                 [
                   {
                     "params": [
-                      "n_Cores"
+                      "k_Cores"
                     ],
                     "type": "field"
                   },
@@ -1171,6 +1251,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -1204,8 +1290,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -1217,7 +1302,7 @@
             "h": 4,
             "w": 11,
             "x": 7,
-            "y": 169
+            "y": 282
           },
           "id": 121,
           "maxDataPoints": 100,
@@ -1233,10 +1318,11 @@
               "values": false
             },
             "showPercentChange": false,
+            "text": {},
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "/ 分区总容量",
@@ -1246,7 +1332,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1262,7 +1348,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1280,7 +1366,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/"
                 }
@@ -1294,7 +1386,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1311,7 +1403,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1329,7 +1421,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/home"
                 }
@@ -1343,7 +1441,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1360,7 +1458,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1378,7 +1476,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/Audit"
                 }
@@ -1392,7 +1496,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1409,7 +1513,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1427,7 +1531,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/data"
                 }
@@ -1441,7 +1551,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1458,7 +1568,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1476,7 +1586,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/db_log"
                 }
@@ -1490,7 +1606,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1507,7 +1623,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1525,7 +1641,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/db_data"
                 }
@@ -1539,7 +1661,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1556,7 +1678,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1574,7 +1696,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "/mysql"
                 }
@@ -1588,7 +1716,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1605,7 +1733,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1623,7 +1751,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "C"
                 }
@@ -1637,7 +1771,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1654,7 +1788,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1672,7 +1806,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "D"
                 }
@@ -1686,7 +1826,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "partition_name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -1703,7 +1843,7 @@
                 [
                   {
                     "params": [
-                      "k_Disk_Max"
+                      "k_Max"
                     ],
                     "type": "field"
                   },
@@ -1721,9 +1861,1170 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=",
                   "value": "E"
+                }
+              ]
+            },
+            {
+              "alias": "F盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "K",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "F"
+                }
+              ]
+            },
+            {
+              "alias": "G盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "L",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "G"
+                }
+              ]
+            },
+            {
+              "alias": "H盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "M",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "H"
+                }
+              ]
+            },
+            {
+              "alias": "I盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "N",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "I"
+                }
+              ]
+            },
+            {
+              "alias": "J盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "O",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "J"
+                }
+              ]
+            },
+            {
+              "alias": "K盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "P",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "K"
+                }
+              ]
+            },
+            {
+              "alias": "L盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "Q",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "L"
+                }
+              ]
+            },
+            {
+              "alias": "M盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "R",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "M"
+                }
+              ]
+            },
+            {
+              "alias": "N盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "S",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "N"
+                }
+              ]
+            },
+            {
+              "alias": "O盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "T",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "O"
+                }
+              ]
+            },
+            {
+              "alias": "P盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "U",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "P"
+                }
+              ]
+            },
+            {
+              "alias": "Q盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "V",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "Q"
+                }
+              ]
+            },
+            {
+              "alias": "R盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "W",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "R"
+                }
+              ]
+            },
+            {
+              "alias": "S盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "X",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "S"
+                }
+              ]
+            },
+            {
+              "alias": "T盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "Y",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "T"
+                }
+              ]
+            },
+            {
+              "alias": "U盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "Z",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "U"
+                }
+              ]
+            },
+            {
+              "alias": "V盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "AA",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "V"
+                }
+              ]
+            },
+            {
+              "alias": "W盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "AB",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "W"
+                }
+              ]
+            },
+            {
+              "alias": "X盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "AC",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "X"
+                }
+              ]
+            },
+            {
+              "alias": "Y盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "AD",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "Y"
+                }
+              ]
+            },
+            {
+              "alias": "Z盘总容量",
+              "datasource": {
+                "type": "influxdb"
+              },
+              "groupBy": [
+                {
+                  "params": [
+                    "j_Partition_Name::field"
+                  ],
+                  "type": "tag"
+                }
+              ],
+              "hide": false,
+              "measurement": "Disk_Usage",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT last(\"load5\") FROM \"system\" WHERE (\"host\" =~ /^$Host$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "AE",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "k_Max"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "Host::tag",
+                  "operator": "=~",
+                  "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
+                  "operator": "=",
+                  "value": "Z"
                 }
               ]
             }
@@ -1747,8 +3048,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   }
                 ]
               },
@@ -1760,7 +3060,7 @@
             "h": 3,
             "w": 2,
             "x": 18,
-            "y": 170
+            "y": 283
           },
           "id": 29,
           "maxDataPoints": 100,
@@ -1781,7 +3081,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "已用内存",
@@ -1811,7 +3111,7 @@
                 [
                   {
                     "params": [
-                      "k_Memory_Used"
+                      "k_Used"
                     ],
                     "type": "field"
                   },
@@ -1826,6 +3126,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -1849,8 +3155,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   }
                 ]
               },
@@ -1862,7 +3167,7 @@
             "h": 3,
             "w": 2,
             "x": 20,
-            "y": 170
+            "y": 283
           },
           "id": 138,
           "maxDataPoints": 100,
@@ -1883,7 +3188,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "可用内存",
@@ -1913,7 +3218,7 @@
                 [
                   {
                     "params": [
-                      "l_Memory_Available"
+                      "l_Available"
                     ],
                     "type": "field"
                   },
@@ -1928,6 +3233,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -1950,8 +3261,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-green",
-                    "value": null
+                    "color": "dark-green"
                   },
                   {
                     "color": "dark-red",
@@ -1967,7 +3277,7 @@
             "h": 3,
             "w": 2,
             "x": 22,
-            "y": 170
+            "y": 283
           },
           "id": 30,
           "maxDataPoints": 100,
@@ -1988,7 +3298,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "总进程数",
@@ -2020,7 +3330,7 @@
                 [
                   {
                     "params": [
-                      "o_Processes_Total"
+                      "l_Processes_Total"
                     ],
                     "type": "field"
                   },
@@ -2035,6 +3345,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -2067,8 +3383,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2080,7 +3395,7 @@
             "h": 2,
             "w": 2,
             "x": 5,
-            "y": 171
+            "y": 284
           },
           "id": 105,
           "maxDataPoints": 100,
@@ -2101,7 +3416,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "总内存",
@@ -2120,7 +3435,7 @@
                 [
                   {
                     "params": [
-                      "j_Memory_Max"
+                      "j_Max"
                     ],
                     "type": "field"
                   }
@@ -2131,6 +3446,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -2305,7 +3626,7 @@
             "h": 7,
             "w": 16,
             "x": 0,
-            "y": 787
+            "y": 2
           },
           "id": 64,
           "options": {
@@ -2318,11 +3639,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "desc"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "CPUs",
@@ -2343,7 +3665,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "Cpu_Usage",
+              "measurement": "CPU_Usage",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2352,7 +3674,7 @@
                 [
                   {
                     "params": [
-                      "j_Cpu_Percent"
+                      "j_Percent"
                     ],
                     "type": "field"
                   },
@@ -2367,6 +3689,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -2390,7 +3718,7 @@
                 }
               ],
               "hide": false,
-              "measurement": "Cpu_Load",
+              "measurement": "CPU_Load",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2414,6 +3742,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -2437,7 +3771,7 @@
                 }
               ],
               "hide": false,
-              "measurement": "Cpu_Load",
+              "measurement": "CPU_Load",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2461,6 +3795,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -2484,7 +3824,7 @@
                 }
               ],
               "hide": false,
-              "measurement": "Cpu_Load",
+              "measurement": "CPU_Load",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -2508,6 +3848,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -2580,7 +3926,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "下载"
+                  "options": "接收"
                 },
                 "properties": [
                   {
@@ -2595,7 +3941,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "上传"
+                  "options": "发送"
                 },
                 "properties": [
                   {
@@ -2613,7 +3959,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 787
+            "y": 2
           },
           "id": 16,
           "options": {
@@ -2626,14 +3972,15 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
-              "alias": "下载",
+              "alias": "接收",
               "datasource": {
                 "type": "influxdb"
               },
@@ -2660,7 +4007,7 @@
                 [
                   {
                     "params": [
-                      "k_Traffic_Current"
+                      "k_Value"
                     ],
                     "type": "field"
                   },
@@ -2678,14 +4025,20 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "j_Traffic_Type::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Type::field",
                   "operator": "=",
                   "value": "Bytes_recv"
                 }
               ]
             },
             {
-              "alias": "上传",
+              "alias": "发送",
               "datasource": {
                 "type": "influxdb"
               },
@@ -2712,7 +4065,7 @@
                 [
                   {
                     "params": [
-                      "k_Traffic_Current"
+                      "k_Value"
                     ],
                     "type": "field"
                   },
@@ -2730,7 +4083,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "j_Traffic_Type::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Type::field",
                   "operator": "=",
                   "value": "Bytes_sent"
                 }
@@ -2880,7 +4239,7 @@
             "h": 7,
             "w": 16,
             "x": 0,
-            "y": 1309
+            "y": 274
           },
           "id": 122,
           "options": {
@@ -2893,11 +4252,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "desc"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "已用内存",
@@ -2927,7 +4287,7 @@
                 [
                   {
                     "params": [
-                      "k_Memory_Used"
+                      "k_Used"
                     ],
                     "type": "field"
                   },
@@ -2942,6 +4302,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -2974,7 +4340,7 @@
                 [
                   {
                     "params": [
-                      "l_Memory_Available"
+                      "l_Available"
                     ],
                     "type": "field"
                   },
@@ -2989,6 +4355,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -3021,7 +4393,7 @@
                 [
                   {
                     "params": [
-                      "j_Memory_Max"
+                      "j_Max"
                     ],
                     "type": "field"
                   },
@@ -3036,6 +4408,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -3068,7 +4446,7 @@
                 [
                   {
                     "params": [
-                      "n_Memory_Percent"
+                      "n_Percent"
                     ],
                     "type": "field"
                   },
@@ -3083,6 +4461,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -3164,7 +4548,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 1309
+            "y": 274
           },
           "id": 77,
           "options": {
@@ -3177,11 +4561,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "desc"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "Total",
@@ -3211,7 +4596,7 @@
                 [
                   {
                     "params": [
-                      "o_Processes_Total"
+                      "l_Processes_Total"
                     ],
                     "type": "field"
                   },
@@ -3226,6 +4611,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -3249,7 +4640,8 @@
       "panels": [
         {
           "datasource": {
-            "type": "influxdb"
+            "type": "influxdb",
+            "uid": "aeraipuz3m1hce"
           },
           "fieldConfig": {
             "defaults": {
@@ -3270,342 +4662,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgba(50, 172, 45, 0.97)",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 400
-                  },
-                  {
-                    "color": "rgba(245, 54, 54, 0.9)",
-                    "value": 500
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Time"
-                  },
-                  {
-                    "id": "custom.hidden",
-                    "value": true
-                  },
-                  {
-                    "id": "custom.align"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Host"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "IP地址"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "transparent",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 120
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "PID"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "PID"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "transparent",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 80
-                  },
-                  {
-                    "id": "unit",
-                    "value": "string"
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "k_ProcessName"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "进程名"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "transparent",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 150
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "CPU"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "thresholds"
-                    }
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "dark-green",
-                          "value": null
-                        },
-                        {
-                          "color": "dark-red",
-                          "value": 100
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 80
-                  },
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "内存"
-                },
-                "properties": [
-                  {
-                    "id": "color"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "dark-green",
-                          "value": null
-                        },
-                        {
-                          "color": "dark-red",
-                          "value": 30
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 80
-                  },
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "命令行"
-                },
-                "properties": [
-                  {
-                    "id": "custom.align",
-                    "value": "left"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#9be0b82e",
-                      "mode": "shades"
-                    }
-                  },
-                  {
-                    "id": "custom.width"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 23,
-            "w": 24,
-            "x": 0,
-            "y": 3
-          },
-          "id": 140,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "enablePagination": true,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "CPU"
-              }
-            ]
-          },
-          "pluginVersion": "11.3.0+security-01",
-          "targets": [
-            {
-              "alias": "",
-              "datasource": {
-                "type": "influxdb"
-              },
-              "groupBy": [
-                {
-                  "params": [
-                    "port::tag"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "host::tag"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "name::tag"
-                  ],
-                  "type": "tag"
-                }
-              ],
-              "measurement": "metric",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT \"l_PID\" as \"PID\",\"m_CPU_Percent\" as \"CPU\",\"n_MEM_Percent\" as \"内存\",\"o_Exec\" as \"命令行\" FROM metric where (\"Host\" =~ /^$Host$/) AND time > now() - 60s GROUP BY \"Host\"::tag,\"k_ProcessName\"::tag",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "table",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "http_code"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "host",
-                  "operator": "=~",
-                  "value": "/^$Host$/"
-                }
-              ]
-            }
-          ],
-          "title": "进程列表 - 最新",
-          "type": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                },
-                "filterable": true,
-                "inspect": false,
-                "minWidth": 0
-              },
-              "decimals": 2,
-              "displayName": "",
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgba(50, 172, 45, 0.97)",
-                    "value": null
+                    "color": "rgba(50, 172, 45, 0.97)"
                   },
                   {
                     "color": "yellow",
@@ -3658,23 +4715,8 @@
                 },
                 "properties": [
                   {
-                    "id": "displayName",
-                    "value": "IP地址"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "transparent",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 120
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
+                    "id": "custom.hidden",
+                    "value": true
                   }
                 ]
               },
@@ -3712,13 +4754,9 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "k_ProcessName"
+                  "options": "进程名"
                 },
                 "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "进程名"
-                  },
                   {
                     "id": "color",
                     "value": {
@@ -3754,8 +4792,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "dark-green",
-                          "value": null
+                          "color": "dark-green"
                         },
                         {
                           "color": "dark-red",
@@ -3793,8 +4830,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "dark-green",
-                          "value": null
+                          "color": "dark-green"
                         },
                         {
                           "color": "dark-red",
@@ -3831,11 +4867,34 @@
                     "id": "color",
                     "value": {
                       "fixedColor": "#9be0b82e",
-                      "mode": "shades"
+                      "mode": "fixed"
                     }
                   },
                   {
                     "id": "custom.width"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "用户名"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "transparent",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 100
                   }
                 ]
               }
@@ -3845,7 +4904,7 @@
             "h": 23,
             "w": 24,
             "x": 0,
-            "y": 100
+            "y": 3
           },
           "id": 142,
           "options": {
@@ -3862,17 +4921,18 @@
             "showHeader": true,
             "sortBy": [
               {
-                "desc": false,
+                "desc": true,
                 "displayName": "时间"
               }
             ]
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "",
               "datasource": {
-                "type": "influxdb"
+                "type": "influxdb",
+                "uid": "fe5vno5znzd34a"
               },
               "groupBy": [
                 {
@@ -3894,10 +4954,10 @@
                   "type": "tag"
                 }
               ],
-              "measurement": "metric",
+              "measurement": "http_status",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT \"l_PID\" as \"PID\",\"m_CPU_Percent\" as \"CPU\",\"n_MEM_Percent\" as \"内存\",\"o_Exec\" as \"命令行\" FROM metric where (\"Host\" =~ /^$Host$/) AND $timeFilter GROUP BY \"Host\"::tag,\"k_ProcessName\"::tag",
+              "query": "SELECT \"i_UserName\" as \"用户名\",\"j_ProcessName\" as \"进程名\",\"k_PID\" as \"PID\",\"l_CPU_Percent\" as \"CPU\",\"m_MEM_Percent\" as \"内存\",\"n_Exec\" as \"命令行\" FROM Processes_List where $timeFilter AND Host=~/^$Host$/ \n AND Host_Name=~/^$Host_Name$/ AND (l_CPU_Percent!=0 or m_MEM_Percent!=0) GROUP BY \"Host\"::tag",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -3924,7 +4984,7 @@
               ]
             }
           ],
-          "title": "进程列表 - 历史",
+          "title": "进程列表",
           "type": "table"
         }
       ],
@@ -3962,8 +5022,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgba(50, 172, 45, 0.97)",
-                    "value": null
+                    "color": "rgba(50, 172, 45, 0.97)"
                   },
                   {
                     "color": "rgba(237, 129, 40, 0.89)",
@@ -4000,7 +5059,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "last"
+                  "options": "当前使用率"
                 },
                 "properties": [
                   {
@@ -4018,7 +5077,8 @@
                     }
                   },
                   {
-                    "id": "custom.align"
+                    "id": "custom.align",
+                    "value": "right"
                   },
                   {
                     "id": "thresholds",
@@ -4026,8 +5086,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "rgba(50, 172, 45, 0.97)",
-                          "value": null
+                          "color": "rgba(50, 172, 45, 0.97)"
                         },
                         {
                           "color": "rgba(237, 129, 40, 0.89)",
@@ -4049,7 +5108,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "i_Partition_Name"
+                  "options": "分区"
                 },
                 "properties": [
                   {
@@ -4062,6 +5121,10 @@
                       "fixedColor": "dark-blue",
                       "mode": "fixed"
                     }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "left"
                   }
                 ]
               }
@@ -4085,9 +5148,15 @@
               ],
               "show": false
             },
-            "showHeader": true
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "分区"
+              }
+            ]
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "datasource": {
@@ -4096,7 +5165,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "i_Partition_Name::tag"
+                    "j_Partition_Name::field"
                   ],
                   "type": "tag"
                 }
@@ -4104,13 +5173,15 @@
               "measurement": "Disk_Usage",
               "orderByTime": "ASC",
               "policy": "default",
+              "query": "SELECT \"j_Partition_Name\" as \"分区\", \"o_Used_Percent\" as \"当前使用率\" FROM \"Disk_Usage\" WHERE \"Host\"::tag =~ /^$Host$/ AND \"Host_Name\"::tag =~ /^$Host_Name$/ AND time > now() - 1m",
+              "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
               "select": [
                 [
                   {
                     "params": [
-                      "o_Disk_Percent"
+                      "o_Used_Percent"
                     ],
                     "type": "field"
                   },
@@ -4190,8 +5261,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "yellow",
@@ -4224,8 +5294,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -4258,8 +5327,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         },
                         {
                           "color": "#EAB839",
@@ -4293,11 +5361,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "$Drive_Name Read",
@@ -4327,7 +5396,7 @@
                 [
                   {
                     "params": [
-                      "l_IO_Value"
+                      "l_Value"
                     ],
                     "type": "field"
                   },
@@ -4345,13 +5414,19 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Drive_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Drive_Name::field",
                   "operator": "=~",
                   "value": "/^$Drive_Name$/"
                 },
                 {
                   "condition": "AND",
-                  "key": "k_IO_Type::tag",
+                  "key": "k_Type::field",
                   "operator": "=",
                   "value": "Read_bytes"
                 }
@@ -4385,7 +5460,7 @@
                 [
                   {
                     "params": [
-                      "l_IO_Value"
+                      "l_Value"
                     ],
                     "type": "field"
                   },
@@ -4403,13 +5478,19 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Drive_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Drive_Name::field",
                   "operator": "=~",
                   "value": "/^$Drive_Name$/"
                 },
                 {
                   "condition": "AND",
-                  "key": "k_IO_Type::tag",
+                  "key": "k_Type::field",
                   "operator": "=",
                   "value": "Write_bytes"
                 }
@@ -4470,8 +5551,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "transparent",
-                    "value": null
+                    "color": "transparent"
                   }
                 ]
               },
@@ -4481,42 +5561,50 @@
               {
                 "matcher": {
                   "id": "byRegexp",
-                  "options": "/.*分区空闲空间/"
+                  "options": "/.*空闲空间/"
                 },
                 "properties": [
                   {
                     "id": "color",
                     "value": {
-                      "fixedColor": "semi-dark-green",
+                      "fixedColor": "dark-purple",
                       "mode": "fixed"
                     }
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byRegexp",
-                  "options": "/.*分区已使用空间/"
+                  "options": "/.*已使用空间/"
                 },
                 "properties": [
                   {
                     "id": "color",
                     "value": {
-                      "fixedColor": "semi-dark-blue",
+                      "fixedColor": "dark-blue",
                       "mode": "fixed"
                     }
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byRegexp",
-                  "options": "/.*分区已用 %/"
+                  "options": "/.*已使用 %/"
                 },
                 "properties": [
                   {
                     "id": "custom.axisPlacement",
-                    "value": "right"
+                    "value": "left"
                   },
                   {
                     "id": "unit",
@@ -4528,8 +5616,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "dark-green",
-                          "value": null
+                          "color": "dark-green"
                         },
                         {
                           "color": "dark-yellow",
@@ -4557,7 +5644,7 @@
             "h": 7,
             "w": 16,
             "x": 8,
-            "y": 71
+            "y": 59
           },
           "id": 83,
           "options": {
@@ -4570,31 +5657,19 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
-              "alias": "$Partition_Name 分区已使用空间",
+              "alias": "$Partition_Name 已使用空间",
               "datasource": {
                 "type": "influxdb"
               },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
+              "groupBy": [],
               "measurement": "Disk_Usage",
               "orderByTime": "ASC",
               "policy": "default",
@@ -4604,13 +5679,9 @@
                 [
                   {
                     "params": [
-                      "l_Disk_Used"
+                      "l_Used"
                     ],
                     "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
                   }
                 ]
               ],
@@ -4622,31 +5693,24 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=~",
                   "value": "/^$Partition_Name$/"
                 }
               ]
             },
             {
-              "alias": "$Partition_Name 分区空闲空间",
+              "alias": "$Partition_Name 空闲空间",
               "datasource": {
                 "type": "influxdb"
               },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
+              "groupBy": [],
               "hide": false,
               "measurement": "Disk_Usage",
               "orderByTime": "ASC",
@@ -4657,13 +5721,9 @@
                 [
                   {
                     "params": [
-                      "m_Disk_Free"
+                      "m_Free"
                     ],
                     "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
                   }
                 ]
               ],
@@ -4675,50 +5735,39 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=~",
                   "value": "/^$Partition_Name$/"
                 }
               ]
             },
             {
-              "alias": "$Partition_Name 分区已用 %",
+              "alias": "$Partition_Name 已使用 %",
               "datasource": {
                 "type": "influxdb"
               },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
+              "groupBy": [],
               "hide": false,
               "measurement": "Disk_Usage",
               "orderByTime": "ASC",
               "policy": "default",
               "query": "SELECT last(\"l_Disk_Used\") / last(\"k_Disk_Max\") * 100 FROM \"Disk_Usage\" WHERE (\"Host\"::tag =~ /^$Host$/ AND \"i_Partition_Name\"::tag =~ /^$Partition_Name$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
-              "rawQuery": true,
+              "rawQuery": false,
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
                 [
                   {
                     "params": [
-                      "l_Disk_Used"
+                      "o_Used_Percent"
                     ],
                     "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
                   }
                 ]
               ],
@@ -4730,7 +5779,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Partition_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Partition_Name::field",
                   "operator": "=~",
                   "value": "/^$Partition_Name$/"
                 }
@@ -4778,8 +5833,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgba(50, 172, 45, 0.97)",
-                    "value": null
+                    "color": "rgba(50, 172, 45, 0.97)"
                   },
                   {
                     "color": "yellow",
@@ -4839,7 +5893,7 @@
                   },
                   {
                     "id": "custom.align",
-                    "value": "auto"
+                    "value": "center"
                   },
                   {
                     "id": "thresholds",
@@ -4847,8 +5901,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "rgba(50, 172, 45, 0.97)",
-                          "value": null
+                          "color": "rgba(50, 172, 45, 0.97)"
                         },
                         {
                           "color": "yellow",
@@ -4874,26 +5927,15 @@
                 },
                 "properties": [
                   {
-                    "id": "displayName",
-                    "value": "IP地址"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "transparent",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 120
+                    "id": "custom.hidden",
+                    "value": true
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "j_Web_Port"
+                  "options": "网站端口"
                 },
                 "properties": [
                   {
@@ -4914,13 +5956,21 @@
                   {
                     "id": "custom.width",
                     "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "i_Web_Name"
+                  "options": "网站名称"
                 },
                 "properties": [
                   {
@@ -4936,13 +5986,17 @@
                   },
                   {
                     "id": "custom.width"
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "left"
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Response_Time"
+                  "options": "响应时间"
                 },
                 "properties": [
                   {
@@ -4963,6 +6017,10 @@
                   {
                     "id": "custom.width",
                     "value": 100
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
                   }
                 ]
               }
@@ -4972,7 +6030,7 @@
             "h": 12,
             "w": 8,
             "x": 0,
-            "y": 5
+            "y": 150
           },
           "id": 119,
           "options": {
@@ -4988,7 +6046,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "",
@@ -5015,10 +6073,10 @@
                   "type": "tag"
                 }
               ],
-              "measurement": "Web_Status",
+              "measurement": "http_status",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT last(\"m_Http_Code\") as \"Http_Code\",last(\"n_Response_Time\") as \"Response_Time\" FROM \"Web_Status\" WHERE (\"Host\" =~ /^$Host$/) AND $timeFilter GROUP BY \"j_Web_Port\"::tag, \"Host\"::tag, \"i_Web_Name\"::tag",
+              "query": "SELECT \"j_Name\" as \"网站名称\",\"k_Port\" as \"网站端口\",\"m_Http_Code\" as \"Http_Code\",\"n_Response_Time\" as \"响应时间\" FROM \"Web_Status\" WHERE time > now() - 1m AND \"Host\" =~ /^$Host$/ AND \"Host_Name\" =~ /^$Host_Name$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -5095,8 +6153,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "yellow",
@@ -5114,12 +6171,12 @@
               {
                 "matcher": {
                   "id": "byRegexp",
-                  "options": "/.*Response Time/"
+                  "options": "/.* 响应时间/"
                 },
                 "properties": [
                   {
                     "id": "custom.axisPlacement",
-                    "value": "right"
+                    "value": "left"
                   },
                   {
                     "id": "unit",
@@ -5142,7 +6199,7 @@
                 "properties": [
                   {
                     "id": "custom.axisPlacement",
-                    "value": "left"
+                    "value": "right"
                   },
                   {
                     "id": "unit",
@@ -5162,7 +6219,7 @@
             "h": 12,
             "w": 16,
             "x": 8,
-            "y": 5
+            "y": 150
           },
           "id": 118,
           "options": {
@@ -5175,11 +6232,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "$Web_Name Http Code",
@@ -5227,14 +6285,20 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Web_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Name::field",
                   "operator": "=~",
                   "value": "/^$Web_Name$/"
                 }
               ]
             },
             {
-              "alias": "$Web_Name Response Time",
+              "alias": "$Web_Name 响应时间",
               "datasource": {
                 "type": "influxdb"
               },
@@ -5280,7 +6344,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Web_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Name::field",
                   "operator": "=~",
                   "value": "/^$Web_Name$/"
                 }
@@ -5319,8 +6389,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "#299c46",
-                    "value": null
+                    "color": "#299c46"
                   }
                 ]
               },
@@ -5353,7 +6422,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "数据库版本",
@@ -5398,6 +6467,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -5431,8 +6506,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -5465,7 +6539,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "数据流入",
@@ -5512,6 +6586,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -5545,8 +6625,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -5587,7 +6666,7 @@
             "textMode": "value_and_name",
             "wideLayout": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "QPS",
@@ -5634,6 +6713,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -5688,8 +6773,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -5753,11 +6837,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "流入",
@@ -5802,6 +6887,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -5848,6 +6939,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -5870,8 +6967,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -5904,7 +7000,7 @@
             "textMode": "value_and_name",
             "wideLayout": false
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "启动时间",
@@ -5949,6 +7045,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -5982,8 +7084,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -6016,7 +7117,7 @@
             "textMode": "value_and_name",
             "wideLayout": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "数据流出",
@@ -6063,6 +7164,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -6096,8 +7203,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -6138,7 +7244,7 @@
             "textMode": "value_and_name",
             "wideLayout": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "TPS",
@@ -6185,6 +7291,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -6218,8 +7330,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -6260,7 +7371,7 @@
             "textMode": "value_and_name",
             "wideLayout": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "连接数",
@@ -6307,6 +7418,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -6340,8 +7457,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -6382,7 +7498,7 @@
             "textMode": "value_and_name",
             "wideLayout": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "慢查询",
@@ -6429,6 +7545,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -6483,8 +7605,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -6601,11 +7722,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "QPS",
@@ -6650,6 +7772,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -6696,6 +7824,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -6743,6 +7877,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -6790,6 +7930,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -6837,6 +7983,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -6891,8 +8043,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -6971,11 +8122,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "命中率",
@@ -7020,6 +8172,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -7066,6 +8224,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -7113,6 +8277,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -7167,8 +8337,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -7262,11 +8431,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "查询",
@@ -7311,6 +8481,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -7357,6 +8533,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -7404,6 +8586,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             },
@@ -7451,6 +8639,12 @@
                   "key": "Host::tag",
                   "operator": "=~",
                   "value": "/^$Host$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
                 }
               ]
             }
@@ -7496,8 +8690,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgba(50, 172, 45, 0.97)",
-                    "value": null
+                    "color": "rgba(50, 172, 45, 0.97)"
                   }
                 ]
               },
@@ -7510,10 +8703,6 @@
                   "options": "Time"
                 },
                 "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Time"
-                  },
                   {
                     "id": "custom.hidden",
                     "value": true
@@ -7554,8 +8743,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "yellow",
-                          "value": null
+                          "color": "yellow"
                         },
                         {
                           "color": "green",
@@ -7569,30 +8757,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Host"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "IP地址"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "transparent",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 120
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "i_Data_Name"
+                  "options": "业务名称"
                 },
                 "properties": [
                   {
@@ -7605,13 +8770,17 @@
                       "fixedColor": "transparent",
                       "mode": "fixed"
                     }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 300
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "k_Data_Comment"
+                  "options": "业务描述"
                 },
                 "properties": [
                   {
@@ -7624,6 +8793,29 @@
                       "fixedColor": "transparent",
                       "mode": "fixed"
                     }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "数据单位"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "transparent",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
                   }
                 ]
               }
@@ -7651,7 +8843,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "",
@@ -7678,10 +8870,10 @@
                   "type": "tag"
                 }
               ],
-              "measurement": "Business_Data",
+              "measurement": "http_status",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT last(\"m_Data_Value\") as \"当前数据量\" FROM \"Business_Data\" WHERE (\"Host\" =~ /^$Host$/) AND $timeFilter GROUP BY \"Host\"::tag, \"i_Data_Name\"::tag, \"k_Data_Comment\"::tag",
+              "query": "SELECT \"j_Name\" as \"业务名称\",\"k_Comment\" as \"业务描述\",\"l_Value\" as \"当前数据量\",\"m_Unit\" as \"数据单位\" FROM \"Business_Data\" WHERE time > now() - 1h AND \"Host\" =~ /^$Host$/ AND \"Host_Name\" =~ /^$Host_Name$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -7759,8 +8951,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "yellow",
-                    "value": null
+                    "color": "yellow"
                   },
                   {
                     "color": "green",
@@ -7789,11 +8980,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0+security-01",
+          "pluginVersion": "12.0.1+security-01",
           "targets": [
             {
               "alias": "$Data_Name 最新数据量",
@@ -7823,7 +9015,7 @@
                 [
                   {
                     "params": [
-                      "m_Data_Value"
+                      "l_Value"
                     ],
                     "type": "field"
                   },
@@ -7841,7 +9033,13 @@
                 },
                 {
                   "condition": "AND",
-                  "key": "i_Data_Name::tag",
+                  "key": "Host_Name::tag",
+                  "operator": "=~",
+                  "value": "/^$Host_Name$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "j_Name::field",
                   "operator": "=~",
                   "value": "/^$Data_Name$/"
                 }
@@ -7858,17 +9056,18 @@
   ],
   "preload": false,
   "refresh": "1m",
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [
-    "Linux",
-    "InfluxDB"
+    "InfluxDB",
+    "Windows",
+    "Linux"
   ],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "192.168.1.1",
-          "value": "192.168.1.1"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "influxdb"
@@ -7888,82 +9087,19 @@
       },
       {
         "current": {
-          "text": "xxx网站",
-          "value": "xxx网站"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "influxdb"
         },
-        "definition": "show tag values with key=\"i_Web_Name\"",
+        "definition": "SHOW TAG VALUES WITH KEY = \"Host_Name\"",
         "includeAll": false,
-        "label": "网站",
-        "name": "Web_Name",
+        "label": "主机名",
+        "name": "Host_Name",
         "options": [],
         "query": {
-          "query": "show tag values with key=\"i_Web_Name\"",
-          "refId": "InfluxVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "current": {
-          "text": "sda",
-          "value": "sda"
-        },
-        "datasource": {
-          "type": "influxdb"
-        },
-        "definition": "show tag values with key = \"i_Drive_Name\"",
-        "includeAll": false,
-        "label": "磁盘",
-        "name": "Drive_Name",
-        "options": [],
-        "query": {
-          "query": "show tag values with key = \"i_Drive_Name\"",
-          "refId": "InfluxVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "current": {
-          "text": "/",
-          "value": "/"
-        },
-        "datasource": {
-          "type": "influxdb"
-        },
-        "definition": "show tag values with key = \"i_Partition_Name\"",
-        "includeAll": false,
-        "label": "分区",
-        "name": "Partition_Name",
-        "options": [],
-        "query": {
-          "query": "show tag values with key = \"i_Partition_Name\"",
-          "refId": "InfluxVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "current": {
-          "text": "xxx数据",
-          "value": "xxx数据"
-        },
-        "datasource": {
-          "type": "influxdb"
-        },
-        "definition": "show tag values with key=\"i_Data_Name\"",
-        "includeAll": false,
-        "label": "业务数据",
-        "name": "Data_Name",
-        "options": [],
-        "query": {
-          "query": "show tag values with key=\"i_Data_Name\"",
+          "query": "SHOW TAG VALUES WITH KEY = \"Host_Name\"",
           "refId": "InfluxVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -7978,14 +9114,76 @@
         "datasource": {
           "type": "influxdb"
         },
-        "definition": "show tag values with key=\"k_Name\"",
-        "hide": 2,
+        "definition": "select distinct(\"j_Name\") from Web_Status where time > now() - 2m",
         "includeAll": false,
-        "label": "进程",
-        "name": "Processes_Name",
+        "label": "网站",
+        "name": "Web_Name",
         "options": [],
         "query": {
-          "query": "show tag values with key=\"k_Name\"",
+          "query": "select distinct(\"j_Name\") from Web_Status where time > now() - 2m",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "sda",
+          "value": "sda"
+        },
+        "datasource": {
+          "type": "influxdb"
+        },
+        "definition": "select distinct(\"j_Drive_Name\") from Disk_IO where time > now() - 2m",
+        "includeAll": false,
+        "label": "磁盘",
+        "name": "Drive_Name",
+        "options": [],
+        "query": {
+          "query": "select distinct(\"j_Drive_Name\") from Disk_IO where time > now() - 2m",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "/",
+          "value": "/"
+        },
+        "datasource": {
+          "type": "influxdb"
+        },
+        "definition": "select distinct(\"j_Partition_Name\") from Disk_Usage where time > now() - 2m",
+        "includeAll": false,
+        "label": "分区",
+        "name": "Partition_Name",
+        "options": [],
+        "query": {
+          "query": "select distinct(\"j_Partition_Name\") from Disk_Usage where time > now() - 2m",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "influxdb"
+        },
+        "definition": "select distinct(\"j_Name\") from Business_Data where time > now() - 2h",
+        "includeAll": false,
+        "label": "业务数据",
+        "name": "Data_Name",
+        "options": [],
+        "query": {
+          "query": "select distinct(\"j_Name\") from Business_Data where time > now() - 2h",
           "refId": "InfluxVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -7995,13 +9193,12 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Host Dashboard",
   "uid": "Iqw--kMWz",
-  "version": 52,
-  "weekStart": ""
+  "version": 16
 }
