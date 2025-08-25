@@ -10,6 +10,9 @@ CHECK_NCPA="${NAGIOS_PLUGINS}/check_ncpa"
 # Influxdb写入日志
 INFLUX_ERROR='/data/nagios/var/influxdb.error'
 
+# 加载配置文件
+source /data/nagios/etc/check_performance.env
+
 # 帮助以及错误信息
 dep_msg(){
   STD_OUT='Dependences Error.'
@@ -29,11 +32,10 @@ error_msg(){
 # 接收传参
 SET_PROXY="${1}"
 NCPA_NODE="${2}"
-NCPA_ADDRESS="${3}"
-DST_CLIENT="${4}"
-NCPA_PORT="${5}"
-INFLUX_URL="${6}"
-INFLUX_AUTH="${7}"
+HOST_NAME="${3}"
+NCPA_ADDRESS="${4}"
+DST_CLIENT="${5}"
+NCPA_PORT="${6}"
 
 # 是否使用代理
 [ ${SET_PROXY} -eq 1 ] && PROXY="/${DST_CLIENT}"
@@ -41,68 +43,55 @@ INFLUX_AUTH="${7}"
 # 校验传参
 case ${NCPA_NODE} in
   host)
-    [ $# -eq 10 ] || error_msg
-    NCPA_TOKEN="${8}"
-    PLUGIN="${9}"
-    [ ${SET_PROXY} -eq 1 ] && PROXY="/${10}"
+    [ $# -eq 8 ] || error_msg
+    PLUGIN="${7}"
+    [ ${SET_PROXY} -eq 1 ] && PROXY="/${8}"
     ;;
   website)
-    [ $# -eq 15 ] || error_msg
-    NCPA_TOKEN="${8}"
-    HTTP_PROXY="${9}"
-    HTTP_PROTOCOL="${10}"
-    HTTP_PORT="${11}"
-    HTTP_AUTH="${12}"
-    HTTP_URL="${13}"
-    HTTP_SSL=${14}
-    HTTP_NAME="${15}"
+    [ $# -eq 13 ] || error_msg
+    HTTP_PROXY="${7}"
+    HTTP_PROTOCOL="${8}"
+    HTTP_PORT="${9}"
+    HTTP_AUTH="${10}"
+    HTTP_URL="${11}"
+    HTTP_SSL=${12}
+    HTTP_NAME="${13}"
     ;;
   mysql_status)
-    [ $# -eq 12 ] || error_msg
-    NCPA_TOKEN="${8}"
-    MYSQL_PORT="${9}"
-    MYSQL_USER="${10}"
-    MYSQL_PASSWORD="${11}"
-    MYSQL_MODE="${12}"
+    [ $# -eq 8 ] || error_msg
+    MYSQL_PORT="${7}"
+    MYSQL_MODE="${8}"
     ;;
   mysql_health)
-    [ $# -eq 12 ] || error_msg
-    MYSQL_USER="${8}"
-    MYSQL_PASSWORD="${9}"
-    MYSQL_HEALTH="${10}"
-    WARNING="${11}"
-    CRITICAL="${12}"
+    [ $# -eq 9 ] || error_msg
+    MYSQL_HEALTH="${7}"
+    WARNING="${8}"
+    CRITICAL="${9}"
     ;;
   mysql_data)
-    [ $# -eq 16 ] ||error_msg
-    NCPA_TOKEN="${8}"
-    MYSQL_PORT="${9}"
-    MYSQL_USER="${10}"
-    MYSQL_PASSWORD="${11}"
-    MYSQL_DATABASE="${12}"
-    MYSQL_DATA="${13}"
-    MYSQL_SELECT="SQL_${14}"
-    MYSQL_COMMENT="${15}"
-    MYSQL_UNIT="${16}"
+    [ $# -eq 12 ] ||error_msg
+    MYSQL_PORT="${7}"
+    MYSQL_DATABASE="${8}"
+    MYSQL_DATA="${9}"
+    MYSQL_SELECT="SQL_${10}"
+    MYSQL_COMMENT="${11}"
+    MYSQL_UNIT="${12}"
     ;;
   cpu|memory|disk|IO|interface|system)
-    [ $# -eq 12 ] || error_msg
-    NCPA_TOKEN="${8}"
-    NCPA_PATH="${9}"
-    WARNING="${10}"
-    CRITICAL="${11}"
-    NCPA_UNIT="${12}"
+    [ $# -eq 10 ] || error_msg
+    NCPA_PATH="${7}"
+    WARNING="${8}"
+    CRITICAL="${9}"
+    NCPA_UNIT="${10}"
     ;;
   load)
-    [ $# -eq 11 ] || error_msg
-    NCPA_TOKEN="${8}"
-    WARNING="${9}"
-    CRITICAL="${10}"
-    PLUGIN_ARGS="$(echo _${11}|sed 's/ /_/g')"
+    [ $# -eq 9 ] || error_msg
+    WARNING="${7}"
+    CRITICAL="${8}"
+    PLUGIN_ARGS="$(echo _${9}|sed 's/ /_/g')"
     ;;
   processes)
-    [ $# -eq 8 ] || error_msg
-    NCPA_TOKEN="${8}"
+    [ $# -eq 6 ] || error_msg
 esac
 
 # 检测依赖
@@ -206,6 +195,7 @@ check_host(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Host_Status,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=${HOST_status},\
 j_PING_Loss=${Packet_loss},\
@@ -238,6 +228,7 @@ check_cpu(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 CPU_Usage,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${CPU_status}\",\
 j_Percent=${CPU_percent},\
@@ -271,6 +262,7 @@ check_mem(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Memory_Usage,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${Memory_status}\",\
 j_Max=${Memory_max},\
@@ -311,6 +303,7 @@ check_disk(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Disk_Usage,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${Disk_status}\",\
 j_Partition_Name=\"${NCPA_PATH}\",\
@@ -350,6 +343,7 @@ check_IO(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Disk_IO,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${IO_status}\",\
 j_Drive_Name=\"${drive}\",\
@@ -383,6 +377,7 @@ check_interface(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 Interface_Usage,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${Traffic_status}\",\
 j_Type=\"${Traffic_type}\",\
@@ -419,6 +414,7 @@ check_load(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 CPU_Load,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${Load_Status}\",\
 j_Load_1=${Load_1},\
@@ -496,6 +492,7 @@ check_website(){
     curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
     --data-binary "\
 Web_Status,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${Http_Status}\",\
 j_Name=\"${HTTP_NAME}\",\
@@ -665,6 +662,7 @@ innodb_rows_';" 2>/dev/null)"
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 MySQL_Status,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT},\
 MySQL_Port=${MYSQL_PORT},\
 MySQL_Mode=${MYSQL_MODE},\
@@ -707,7 +705,7 @@ ${Slave_Status}" \
 &>>${INFLUX_ERROR}
 
   # 输出内容
-  STD_OUT="Version:${MySQL_Version};Uptime:${Uptime}s;Threads_connected:${Threads_connected};Questions:${Questions};QPS:${QPS};TPS:${TPS};Slow_queries:${Slow_queries_per_sec}/s"
+  STD_OUT="Version:${MySQL_Version}; Uptime:${Uptime}s; Threads_connected:${Threads_connected}; Questions:${Questions}; QPS:${QPS}; TPS:${TPS}; Slow_queries:${Slow_queries_per_sec}/s"
 
   # 退出码
   EXIT_CODE=${return_code}
@@ -743,12 +741,12 @@ check_mysql_health(){
         local return_code=$?
         local comment="平均每秒慢查询：${result}"
         ;;
-      # 从库数据与主库数据时间差
+      # 从库数据与主库数据同步时间差
       Seconds_Behind_Master)
         digital_compare ${result} ${WARNING} ${CRITICAL}
         # 存储返回值
         local return_code=$?
-        local comment="当前从库与主库数据时间差：${result}秒"
+        local comment="当前数据同步时间差：${result}秒"
         ;;
       # 从库状态
       Slave_IO_Running|Slave_SQL_Running)
@@ -807,6 +805,7 @@ check_mysql_data(){
       curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
       --data-binary "\
 Business_Data,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=${return_code},\
 j_Name=\"${MYSQL_DATA}\",\
@@ -876,6 +875,7 @@ system_info(){
   curl -s -u "${INFLUX_AUTH}" -XPOST "http://${INFLUX_URL}/write?db=nagios_perfdata"\
   --data-binary "\
 System_Info,\
+Host_Name=${HOST_NAME},\
 Host=${DST_CLIENT} \
 i_Status=\"${System_status}\",\
 j_Uptime=${Uptime},\
@@ -907,7 +907,7 @@ check_processes(){
     # 检查结果缓存文件
     local BUFFER_FILE=$(date +%s%N)
     #
-    echo ${result}|jq ". += {\"host\": \"${DST_CLIENT}\", \"timestamp\": ${BUFFER_FILE}}" >${BUFFER_FILE}
+    echo ${result}|jq ". += {\"host\": \"${DST_CLIENT}\", \"host_name\": \"${HOST_NAME}\", \"timestamp\": ${BUFFER_FILE}}" >${BUFFER_FILE}
     # 重新定义输出信息
     local result="OK. Processes Count: $(echo ${result}|jq '.processes|length') "
   else
